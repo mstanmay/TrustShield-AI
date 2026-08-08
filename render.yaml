@@ -1,0 +1,35 @@
+# Render Infrastructure Blueprint for TrustShield AI Backend
+# Deployable as Docker Web Service or Python Web Service
+services:
+  - type: web
+    name: trustshield-backend
+    runtime: docker
+    dockerfilePath: backend/Dockerfile
+    dockerContext: backend
+    plan: free
+    region: oregon
+    healthCheckPath: /health
+    autoDeploy: true
+    envVars:
+      - key: DEBUG
+        value: "false"
+      - key: LOG_LEVEL
+        value: "INFO"
+      - key: DATABASE_URL
+        value: "sqlite+aiosqlite:///./sebi_fraud.db"
+      - key: DATABASE_SYNC_URL
+        value: "sqlite:///./sebi_fraud.db"
+      - key: REDIS_URL
+        value: "redis://localhost:6379/0"
+      - key: JWT_SECRET_KEY
+        generateValue: true
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: ANTHROPIC_MODEL_NAME
+        value: "claude-sonnet-4-20250514"
+      - key: ENABLE_MALWARE_SCAN
+        value: "false"
+      - key: ENABLE_VIRUSTOTAL
+        value: "false"
+      - key: OTEL_ENABLED
+        value: "false"

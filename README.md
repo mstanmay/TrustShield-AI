@@ -85,7 +85,26 @@ cp .env.production.example .env
 docker compose up -d --build
 ```
 
+### ☁️ Cloud Deployment (Vercel + Render)
+
+Deploy the entire fullstack platform to production in under 5 minutes:
+
+1. **Deploy Backend on Render**:
+   - Create a new **Web Service** on [Render](https://dashboard.render.com/) pointing to this repository.
+   - Use `render.yaml` or set root directory to `backend/` and runtime to **Docker** (or Python 3).
+   - Set environment variables (`PORT=8000`, `DATABASE_URL=sqlite+aiosqlite:///./sebi_fraud.db`, `JWT_SECRET_KEY`).
+   - Copy your backend URL: e.g. `https://trustshield-backend.onrender.com`.
+
+2. **Deploy Frontend on Vercel**:
+   - Import this repository on [Vercel](https://vercel.com/).
+   - Framework preset: **Vite** | Build command: `npm run build` | Output dir: `dist`.
+   - Set environment variable: `VITE_API_URL=https://trustshield-backend.onrender.com`.
+   - Click **Deploy** to get your live URL (e.g. `https://trustshield-ai.vercel.app`).
+
+📖 Detailed walkthrough: [docs/DEPLOYMENT_VERCEL_RENDER.md](docs/DEPLOYMENT_VERCEL_RENDER.md)
+
 ---
+
 
 ## 🏗️ Architecture
 

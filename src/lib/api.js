@@ -1,8 +1,6 @@
-/**
- * API client helper connecting React frontend to FastAPI backend.
- */
+const BACKEND_URL = (import.meta.env.VITE_API_URL || '').replace(/\/$/, '');
+const API_BASE = `${BACKEND_URL}/api/v1`;
 
-const API_BASE = '/api/v1';
 
 /**
  * Ingest artifact (File upload, URL, or Text) for fraud analysis.
