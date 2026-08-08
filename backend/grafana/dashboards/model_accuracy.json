@@ -1,0 +1,42 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "title": "Production Model Confidence Scores",
+      "type": "gauge",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+      "targets": [
+        {
+          "expr": "sebi_model_confidence_score",
+          "legendFormat": "{{model_name}}"
+        }
+      ]
+    },
+    {
+      "title": "Graph DB Traversal Latency (seconds)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+      "targets": [
+        {
+          "expr": "rate(sebi_graph_traversal_latency_seconds_sum[1m]) / rate(sebi_graph_traversal_latency_seconds_count[1m])",
+          "legendFormat": "Neo4j {{query_type}}"
+        }
+      ]
+    }
+  ],
+  "refresh": "5s",
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": ["sebi", "model-accuracy"],
+  "time": { "from": "now-1h", "to": "now" },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "SEBI Trust Platform — MLOps Model Accuracy & Graph Analytics",
+  "uid": "sebi-model-accuracy"
+}

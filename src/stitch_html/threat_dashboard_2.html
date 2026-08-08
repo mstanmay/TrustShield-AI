@@ -1,0 +1,378 @@
+<!DOCTYPE html><html class="" lang="en"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>SEBI Sentinel | Threat Intelligence Dashboard</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:wght@400;500;700&amp;family=Domine:wght@400;500;700&amp;family=Jetbrains+Mono:wght@400;500;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<style>
+        :root {
+            --detection-cyan: #00f1fd;
+            --guardian-blue: #0052cc;
+        }
+        
+        body {
+            background-color: #121212;
+            color: #e5e2e1;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .glass-card:hover {
+            border-color: var(--detection-cyan);
+            box-shadow: 0 0 8px rgba(0, 241, 253, 0.2);
+        }
+
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+
+        .scan-line {
+            width: 100%;
+            height: 2px;
+            background: var(--detection-cyan);
+            position: absolute;
+            top: 0;
+            left: 0;
+            animation: scan 4s linear infinite;
+            opacity: 0.5;
+            box-shadow: 0 0 15px var(--detection-cyan);
+        }
+
+        @keyframes scan {
+            0% { top: 0; }
+            100% { top: 100%; }
+        }
+
+        .grid-bg {
+            background-image: linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        .risk-gauge-arc {
+            stroke-dasharray: 100;
+            stroke-dashoffset: 25;
+            transition: stroke-dashoffset 1s ease-out;
+        }
+
+        /* Custom scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #434654; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #8d90a0; }
+    </style>
+<script id="tailwind-config">tailwind.config = {darkMode: "class", theme: {extend: {colors: {"secondary-fixed": "#cde8e1", "surface-container": "#e7f0ec", "surface-variant": "#dae5e1", "on-primary-fixed": "#00483f", "on-tertiary-fixed": "#044354", "on-surface-variant": "#56615e", "inverse-primary": "#b8ffef", "on-tertiary-container": "#215667", "surface-dim": "#d1dcd9", secondary: "#4b645e", "on-secondary-fixed-variant": "#47605b", "on-primary-fixed-variant": "#1b665b", "on-tertiary": "#f1faff", "on-error": "#fff7f6", "on-primary": "#e3fff7", "surface-tint": "#206a5f", "on-secondary": "#e3fff7", "on-tertiary-fixed-variant": "#2c6071", "secondary-container": "#cde8e1", "on-secondary-container": "#3e5751", outline: "#727d7a", "on-error-container": "#6e0a12", "on-background": "#2a3532", "tertiary-container": "#b4e7fc", error: "#a83836", "surface-container-low": "#eef5f2", "inverse-on-surface": "#999e9c", "on-primary-container": "#0a5c51", "surface-container-high": "#e1eae7", "primary-fixed-dim": "#9ce2d3", "outline-variant": "#a9b4b1", background: "#f6faf8", "error-container": "#fa746f", "surface-bright": "#f6faf8", "surface-container-lowest": "#ffffff", "on-surface": "#2a3532", tertiary: "#326677", surface: "#f6faf8", "primary-fixed": "#aaf0e1", "inverse-surface": "#0a0f0e", "tertiary-fixed-dim": "#a7d9ed", "primary-container": "#aaf0e1", primary: "#206a5f", "on-secondary-fixed": "#2b443f", "tertiary-fixed": "#b4e7fc", "surface-container-highest": "#dae5e1", "secondary-fixed-dim": "#bfdad3", "tertiary-dim": "#25596a", "primary-dim": "#0d5e53", "error-dim": "#67040d", "secondary-dim": "#3f5853"}, borderRadius: {DEFAULT: "0.5rem", lg: "1rem", xl: "1.5rem", full: "9999px"}, spacing: {unit: "4px", "stack-md": "16px", "stack-lg": "32px", "container-padding": "24px", gutter: "16px", "stack-sm": "8px"}, fontFamily: {"display-lg": ["Geist"], "label-caps": ["JetBrains Mono"], "data-mono": ["JetBrains Mono"], "body-lg": ["Inter"], "headline-sm": ["Geist"], "headline-md": ["Geist"], "body-sm": ["Inter"], headline: ["Bodoni Moda"], display: ["Bodoni Moda"], body: ["Domine"], label: ["Jetbrains Mono"]}, fontSize: {"display-lg": ["48px", {lineHeight: "56px", letterSpacing: "-0.02em", fontWeight: "700"}], "label-caps": ["11px", {lineHeight: "16px", letterSpacing: "0.06em", fontWeight: "700"}], "data-mono": ["13px", {lineHeight: "16px", letterSpacing: "0.02em", fontWeight: "500"}], "body-lg": ["16px", {lineHeight: "24px", fontWeight: "400"}], "headline-sm": ["18px", {lineHeight: "24px", fontWeight: "600"}], "headline-md": ["24px", {lineHeight: "32px", fontWeight: "600"}], "body-sm": ["14px", {lineHeight: "20px", fontWeight: "400"}]}}}};</script>
+</head>
+<body class="flex bg-background">
+<!-- SideNavBar Anchor -->
+<aside class="fixed left-0 top-0 h-full w-64 border-r border-outline-variant bg-surface flex flex-col py-stack-lg z-50 hidden md:flex">
+<div class="px-6 mb-stack-lg">
+<div class="mb-2 w-24 h-24"><img src="https://lh3.googleusercontent.com/aida/AP1WRLsIbMD96vVGMhvT7TN8EcUcM-OTjZ-jJiDGlEchZDWj-RYAOzXcfYfRfdSpCV21X8OgSOTaXWcKKdVA9iea-f-jGmFfivNNN9jQJPuRkzQXgAoGxFngDGDamYAvB4xmYk-ajRZDLHnBGOrZ1-wlUO5cG8aLzydiVh8UVps_hJ9Dby17DVf9A8k89jlv3ORcLG18ATKrAHkPaDNPzV56_AMWs74DT04wHGtZK_jsVEoxDx3VDdPWmLfi-GA" alt="SEBI Sentinel AI Logo" class="w-full h-full object-contain"></div>
+<p class="text-on-surface-variant font-body-sm text-xs opacity-70">Vigilant Monitoring</p>
+</div>
+<nav class="flex-1 px-3 space-y-2">
+<a class="flex items-center gap-3 px-3 py-2 text-secondary-container font-bold border-l-4 border-secondary-container bg-surface-container-high transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="security">security</span>
+<span class="font-body-sm text-body-sm">Threat Intelligence</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-surface-variant transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="hub">hub</span>
+<span class="font-body-sm text-body-sm">Analysis Nexus</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-surface-variant transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="search_insights">search_insights</span>
+<span class="font-body-sm text-body-sm">Investigations</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 text-on-surface-variant hover:bg-surface-variant transition-colors duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-body-sm text-body-sm">Settings</span>
+</a>
+</nav>
+<div class="px-6 mt-auto">
+<button class="w-full py-3 bg-primary-container text-white rounded-xl font-bold hover:opacity-90 active:scale-95 transition-all">
+                New Investigation
+            </button>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="flex-1 md:ml-64 min-h-screen pb-24 md:pb-0">
+<!-- TopAppBar Anchor -->
+<header class="fixed top-0 right-0 left-0 md:left-64 z-40 flex justify-between items-center px-container-padding h-16 bg-surface-dim/80 backdrop-blur-xl border-b border-outline-variant shadow-sm">
+<div class="flex items-center gap-4 flex-1"><div class="w-12 h-12 flex-shrink-0 md:hidden"><img src="https://lh3.googleusercontent.com/aida/AP1WRLsIbMD96vVGMhvT7TN8EcUcM-OTjZ-jJiDGlEchZDWj-RYAOzXcfYfRfdSpCV21X8OgSOTaXWcKKdVA9iea-f-jGmFfivNNN9jQJPuRkzQXgAoGxFngDGDamYAvB4xmYk-ajRZDLHnBGOrZ1-wlUO5cG8aLzydiVh8UVps_hJ9Dby17DVf9A8k89jlv3ORcLG18ATKrAHkPaDNPzV56_AMWs74DT04wHGtZK_jsVEoxDx3VDdPWmLfi-GA" alt="SEBI Sentinel AI Logo" class="w-full h-full object-contain"></div>
+<div class="relative w-full max-w-md hidden sm:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant" data-icon="search">search</span>
+<input class="w-full bg-black/40 border-none rounded-full pl-10 pr-4 py-2 text-sm focus:ring-1 focus:ring-secondary-container" placeholder="Search fraud signatures..." type="text">
+</div>
+</div>
+<div class="flex items-center gap-6">
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary" data-icon="notifications">notifications</span>
+<span class="material-symbols-outlined text-on-surface-variant cursor-pointer hover:text-primary" data-icon="shield">shield</span>
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-3xl" data-icon="account_circle">account_circle</span>
+</div>
+</div>
+</header>
+<!-- Dashboard Content -->
+<div class="mt-16 p-container-padding grid grid-cols-12 gap-gutter">
+<!-- Hero Row: Heatmap & Market Index -->
+<div class="col-span-12 lg:col-span-8 flex flex-col gap-gutter">
+<section class="glass-card rounded-xl p-stack-md relative overflow-hidden h-[450px]">
+<div class="flex justify-between items-center mb-4 relative z-10">
+<div>
+<h2 class="font-headline-sm text-headline-sm text-primary">Live Fraud Heatmap</h2>
+<p class="text-xs text-on-surface-variant font-label-caps">GEOGRAPHICAL CONCENTRATIONS • REAL-TIME</p>
+</div>
+<div class="flex gap-2">
+<span class="px-2 py-1 bg-error-container text-error text-[10px] rounded font-bold uppercase tracking-wider animate-pulse">Critical: Mumbai Region</span>
+</div>
+</div>
+<!-- Map Placeholder -->
+<div class="absolute inset-0 z-0 opacity-40 mix-blend-screen" data-location="India">
+<div class="w-full h-full bg-[url('placeholder')] bg-cover bg-center" data-alt="A dark, high-contrast digital map of India with luminous glowing hot spots in red and cyan. The visual style is technical and cyber-secure, using a deep midnight blue and black color palette. Fine grid lines and neon topographical data overlays suggest a high-stakes monitoring command center. Lighting is cinematic and futuristic."></div>
+</div>
+<!-- Heatmap Points Overlay -->
+<div class="absolute inset-0 pointer-events-none">
+<div class="absolute top-[60%] left-[25%] w-16 h-16 bg-error/20 rounded-full blur-xl animate-pulse"></div>
+<div class="absolute top-[45%] left-[65%] w-24 h-24 bg-secondary-container/20 rounded-full blur-2xl"></div>
+<div class="absolute top-[30%] left-[40%] w-12 h-12 bg-error/40 rounded-full blur-lg animate-pulse"></div>
+</div>
+<div class="scan-line"></div>
+</section>
+<section class="glass-card rounded-xl p-stack-md">
+<div class="flex justify-between items-end mb-6">
+<div>
+<h2 class="font-headline-sm text-headline-sm text-primary">Market Risk Index</h2>
+<p class="text-xs text-on-surface-variant font-label-caps">LAST 30 DAYS FRAUD VOLUME</p>
+</div>
+<div class="text-right">
+<span class="font-data-mono text-display-lg text-secondary-container">84.2</span>
+<span class="font-label-caps text-on-secondary-container ml-1">↑ 12% Risk</span>
+</div>
+</div>
+<!-- Chart Simulation -->
+<div class="h-48 w-full flex items-end gap-1 px-2">
+<!-- Simplified Bars for Charting -->
+<div class="bg-primary/20 hover:bg-primary w-full h-[60%] transition-all rounded-t-sm"></div>
+<div class="bg-primary/20 hover:bg-primary w-full h-[55%] transition-all rounded-t-sm"></div>
+<div class="bg-primary/20 hover:bg-primary w-full h-[65%] transition-all rounded-t-sm"></div>
+<div class="bg-primary/20 hover:bg-primary w-full h-[40%] transition-all rounded-t-sm"></div>
+<div class="bg-primary/20 hover:bg-primary w-full h-[75%] transition-all rounded-t-sm"></div>
+<div class="bg-error/40 hover:bg-error w-full h-[95%] transition-all rounded-t-sm"></div>
+<div class="bg-primary/20 hover:bg-primary w-full h-[70%] transition-all rounded-t-sm"></div>
+<div class="bg-primary/20 hover:bg-primary w-full h-[62%] transition-all rounded-t-sm"></div>
+<div class="bg-primary/20 hover:bg-primary w-full h-[58%] transition-all rounded-t-sm"></div>
+<div class="bg-primary/20 hover:bg-primary w-full h-[85%] transition-all rounded-t-sm"></div>
+<div class="bg-primary/20 hover:bg-primary w-full h-[66%] transition-all rounded-t-sm"></div>
+<div class="bg-error/40 hover:bg-error w-full h-[100%] transition-all rounded-t-sm"></div>
+</div>
+<div class="flex justify-between mt-2 font-data-mono text-[10px] text-on-surface-variant">
+<span class="">30 DAYS AGO</span>
+<span class="">15 DAYS AGO</span>
+<span class="">CURRENT</span>
+</div>
+</section>
+</div>
+<!-- Side Column: Real-time Alerts & Risk Gauges -->
+<div class="col-span-12 lg:col-span-4 flex flex-col gap-gutter">
+<!-- Risk Gauges -->
+<section class="glass-card rounded-xl p-stack-md">
+<h3 class="font-label-caps text-on-surface-variant mb-4">SYSTEM VIGILANCE</h3>
+<div class="flex items-center justify-around">
+<div class="text-center">
+<div class="relative w-24 h-24 flex items-center justify-center">
+<svg class="w-full h-full -rotate-90">
+<circle cx="48" cy="48" fill="none" r="40" stroke="rgba(255,255,255,0.05)" stroke-width="8"></circle>
+<circle class="risk-gauge-arc" cx="48" cy="48" fill="none" r="40" stroke="url(#cyan-gradient)" stroke-dasharray="251" stroke-dashoffset="60" stroke-width="8"></circle>
+<defs>
+<linearGradient id="cyan-gradient" x1="0%" x2="100%" y1="0%" y2="0%">
+<stop offset="0%" style="stop-color:var(--detection-cyan);stop-opacity:1"></stop>
+<stop offset="100%" style="stop-color:var(--guardian-blue);stop-opacity:1"></stop>
+</linearGradient>
+</defs>
+</svg>
+<span class="absolute font-data-mono text-headline-sm">92%</span>
+</div>
+<p class="mt-2 text-xs font-label-caps">Confidence</p>
+</div>
+<div class="space-y-3">
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-secondary-container animate-pulse"></div>
+<span class="text-xs font-body-sm">Network Monitoring</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-secondary-container animate-pulse"></div>
+<span class="text-xs font-body-sm">Deepfake Scan</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-2 h-2 rounded-full bg-secondary-container animate-pulse"></div>
+<span class="text-xs font-body-sm">Endpoint Integrity</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Real-time Alerts Feed -->
+<section class="glass-card rounded-xl flex-1 flex flex-col overflow-hidden">
+<div class="p-4 border-b border-outline-variant bg-surface-container-low flex justify-between items-center">
+<h2 class="font-headline-sm text-headline-sm text-primary flex items-center gap-2">
+<span class="material-symbols-outlined" data-icon="radar">radar</span>
+                            Real-time Alerts
+                        </h2>
+<span class="font-data-mono text-[10px] text-secondary-container px-2 py-0.5 bg-secondary-container/10 rounded">LIVE</span>
+</div>
+<div class="flex-1 overflow-y-auto p-2 space-y-2">
+<!-- Alert Item -->
+<div class="p-3 bg-white/5 border-l-2 border-error rounded flex flex-col gap-1">
+<div class="flex justify-between items-center">
+<span class="font-label-caps text-[10px] text-error">PHISHING DOMAIN</span>
+<span class="font-data-mono text-[9px] text-on-surface-variant">12:04:15</span>
+</div>
+<p class="font-data-mono text-sm text-on-surface truncate">sebi-investment-kyc.net</p>
+<div class="flex gap-2 mt-1">
+<button class="text-[10px] font-bold text-secondary-container hover:underline">Takedown initiated</button>
+</div>
+</div>
+<!-- Alert Item -->
+<div class="p-3 bg-white/5 border-l-2 border-secondary-container rounded flex flex-col gap-1">
+<div class="flex justify-between items-center">
+<span class="font-label-caps text-[10px] text-secondary-container">TELEGRAM CHANNEL</span>
+<span class="font-data-mono text-[9px] text-on-surface-variant">11:58:22</span>
+</div>
+<p class="font-data-mono text-sm text-on-surface truncate">@SEBI_Gold_Official_Inv</p>
+<div class="flex gap-2 mt-1">
+<button class="text-[10px] font-bold text-secondary-container hover:underline">Marked as Fraud</button>
+</div>
+</div>
+<!-- Alert Item -->
+<div class="p-3 bg-white/5 border-l-2 border-error rounded flex flex-col gap-1">
+<div class="flex justify-between items-center">
+<span class="font-label-caps text-[10px] text-error">MALICIOUS IP</span>
+<span class="font-data-mono text-[9px] text-on-surface-variant">11:45:01</span>
+</div>
+<p class="font-data-mono text-sm text-on-surface truncate">192.168.44.120 (Botnet Node)</p>
+</div>
+<!-- Alert Item -->
+<div class="p-3 bg-white/5 border-l-2 border-secondary-container rounded flex flex-col gap-1">
+<div class="flex justify-between items-center">
+<span class="font-label-caps text-[10px] text-secondary-container">WHATSAPP GROUP</span>
+<span class="font-data-mono text-[9px] text-on-surface-variant">11:30:55</span>
+</div>
+<p class="font-data-mono text-sm text-on-surface truncate">Elite Stock Tips (Reported)</p>
+</div>
+</div>
+</section>
+</div>
+<!-- Bottom Row: Emerging Trends -->
+<div class="col-span-12">
+<div class="flex justify-between items-center mb-6">
+<h2 class="font-headline-md text-headline-md text-primary">Emerging Scam Trends</h2>
+<button class="flex items-center gap-2 text-on-surface-variant hover:text-primary transition-colors">
+<span class="text-sm font-label-caps">VIEW ALL TRENDS</span>
+<span class="material-symbols-outlined text-sm" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+<!-- Trend Card 1 -->
+<div class="glass-card rounded-xl p-0 overflow-hidden flex flex-col h-full group">
+<div class="h-32 bg-surface-container relative overflow-hidden">
+<div class="absolute inset-0 bg-[url('placeholder')]" data-alt="A macro digital rendering of a fraudulent government document with fake official seals and stamps. The aesthetic is grainy, technical, and high-stakes, lit by a cold blue light that suggests a forensic investigation of counterfeit evidence. High contrast and minimalist composition."></div>
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+<div class="absolute bottom-3 left-4">
+<span class="bg-error/20 text-error text-[10px] px-2 py-0.5 rounded font-bold">HIGH THREAT</span>
+</div>
+</div>
+<div class="p-4 flex-1">
+<h3 class="font-headline-sm text-headline-sm text-white mb-2">Fake SEBI Circulars</h3>
+<p class="text-body-sm text-on-surface-variant text-sm mb-4">Highly sophisticated PDF documents mimicking SEBI logos are being circulated via email to solicit 'compliance fees'.</p>
+<div class="flex items-center justify-between border-t border-outline-variant pt-3 mt-auto">
+<span class="font-data-mono text-[11px] text-secondary-container">SHAP IMPACT: 0.85</span>
+<span class="material-symbols-outlined text-on-surface-variant group-hover:translate-x-1 transition-transform" data-icon="chevron_right">chevron_right</span>
+</div>
+</div>
+</div>
+<!-- Trend Card 2 -->
+<div class="glass-card rounded-xl p-0 overflow-hidden flex flex-col h-full group">
+<div class="h-32 bg-surface-container relative overflow-hidden">
+<div class="absolute inset-0 bg-[url('placeholder')]" data-alt="A distorted digital glitch portrait of a businessman, suggesting a deepfake AI generation. The image has digital artifacts, scan lines, and a neon cyan and magenta color palette. The background is a dark abstract technical grid, conveying the deceptive nature of AI-driven financial scams."></div>
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+<div class="absolute bottom-3 left-4">
+<span class="bg-secondary-container/20 text-secondary-container text-[10px] px-2 py-0.5 rounded font-bold">AI DRIVEN</span>
+</div>
+</div>
+<div class="p-4 flex-1">
+<h3 class="font-headline-sm text-headline-sm text-white mb-2">Deepfake Ads</h3>
+<p class="text-body-sm text-on-surface-variant text-sm mb-4">AI-generated videos of financial influencers endorsing fraudulent stock-picking apps on major social platforms.</p>
+<div class="flex items-center justify-between border-t border-outline-variant pt-3 mt-auto">
+<span class="font-data-mono text-[11px] text-secondary-container">SHAP IMPACT: 0.92</span>
+<span class="material-symbols-outlined text-on-surface-variant group-hover:translate-x-1 transition-transform" data-icon="chevron_right">chevron_right</span>
+</div>
+</div>
+</div>
+<!-- Trend Card 3 -->
+<div class="glass-card rounded-xl p-0 overflow-hidden flex flex-col h-full group">
+<div class="h-32 bg-surface-container relative overflow-hidden">
+<div class="absolute inset-0 bg-[url('placeholder')]" data-alt="A smartphone screen displaying a crowded messaging app group chat with rapidly scrolling text and crypto icons. The environment is dark and moody, with the phone screen providing the primary source of cyan light. The style is modern, urban, and tech-noir, focusing on the chaos of digital crowds."></div>
+<div class="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+<div class="absolute bottom-3 left-4">
+<span class="bg-primary/20 text-primary text-[10px] px-2 py-0.5 rounded font-bold">SOCIAL ENGAGEMENT</span>
+</div>
+</div>
+<div class="p-4 flex-1">
+<h3 class="font-headline-sm text-headline-sm text-white mb-2">WhatsApp Investment Groups</h3>
+<p class="text-body-sm text-on-surface-variant text-sm mb-4">Infiltration of private messaging groups by bot accounts promising 500% returns on 'unlisted' penny stocks.</p>
+<div class="flex items-center justify-between border-t border-outline-variant pt-3 mt-auto">
+<span class="font-data-mono text-[11px] text-secondary-container">SHAP IMPACT: 0.78</span>
+<span class="material-symbols-outlined text-on-surface-variant group-hover:translate-x-1 transition-transform" data-icon="chevron_right">chevron_right</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- BottomNavBar Anchor (Mobile Only) -->
+<nav class="fixed bottom-0 w-full md:hidden z-50 bg-surface-container-lowest border-t border-outline-variant flex justify-around p-2 shadow-lg">
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-xl p-2 min-w-[70px]" href="#">
+<span class="material-symbols-outlined" data-icon="radar">radar</span>
+<span class="font-label-caps text-[9px] mt-1">Threats</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant p-2 min-w-[70px]" href="#">
+<span class="material-symbols-outlined" data-icon="insights">insights</span>
+<span class="font-label-caps text-[9px] mt-1">Nexus</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant p-2 min-w-[70px]" href="#">
+<span class="material-symbols-outlined" data-icon="manage_search">manage_search</span>
+<span class="font-label-caps text-[9px] mt-1">Search</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant p-2 min-w-[70px]" href="#">
+<span class="material-symbols-outlined" data-icon="person">person</span>
+<span class="font-label-caps text-[9px] mt-1">Profile</span>
+</a>
+</nav>
+<script>
+        // Micro-interaction for alerts
+        document.addEventListener('DOMContentLoaded', () => {
+            const feed = document.querySelector('.overflow-y-auto');
+            
+            // Randomly simulate new alert arriving
+            setInterval(() => {
+                const alerts = feed.querySelectorAll('div[class*="border-l-2"]');
+                const firstAlert = alerts[0];
+                if (firstAlert) {
+                    firstAlert.classList.add('opacity-50');
+                    setTimeout(() => firstAlert.classList.remove('opacity-50'), 500);
+                }
+            }, 5000);
+        });
+    </script>
+
+
+</body></html>

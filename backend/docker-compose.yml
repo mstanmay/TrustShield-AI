@@ -1,0 +1,312 @@
+version: "3.9"
+
+services:
+  # ── FastAPI Application Backend ──────────────────────────────────────────
+  api:
+    build: .
+    container_name: sebi-api
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    env_file: .env
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://sebi:sebi_secret@postgres:5432/sebi_fraud
+      - DATABASE_SYNC_URL=postgresql://sebi:sebi_secret@postgres:5432/sebi_fraud
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/1
+      - CELERY_RESULT_BACKEND=redis://redis:6379/2
+      - S3_ENDPOINT_URL=http://minio:9000
+      - QDRANT_HOST=qdrant
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672/
+      - NEO4J_URI=bolt://neo4j:7687
+      - MLFLOW_TRACKING_URI=http://mlflow:5000
+      - OTEL_EXPORTER_ENDPOINT=http://jaeger:4317
+    volumes:
+      - ./app:/app/app
+      - ./tests:/app/tests
+    networks:
+      - sebi-frontend-net
+      - sebi-backend-net
+      - sebi-data-net
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+      qdrant:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+  # ── Celery Async Task Worker ──────────────────────────────────────────────
+  worker:
+    build: .
+    container_name: sebi-worker
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      - DATABASE_URL=postgresql+asyncpg://sebi:sebi_secret@postgres:5432/sebi_fraud
+      - DATABASE_SYNC_URL=postgresql://sebi:sebi_secret@postgres:5432/sebi_fraud
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/1
+      - CELERY_RESULT_BACKEND=redis://redis:6379/2
+      - S3_ENDPOINT_URL=http://minio:9000
+      - QDRANT_HOST=qdrant
+      - RABBITMQ_URL=amqp://guest:guest@rabbitmq:5672/
+      - NEO4J_URI=bolt://neo4j:7687
+    volumes:
+      - ./app:/app/app
+    networks:
+      - sebi-backend-net
+      - sebi-data-net
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      rabbitmq:
+        condition: service_healthy
+    command: celery -A app.tasks.celery_app worker --loglevel=info --concurrency=4
+
+  # ── PostgreSQL 16 + pgvector Database ─────────────────────────────────────
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: sebi-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: sebi
+      POSTGRES_PASSWORD: sebi_secret
+      POSTGRES_DB: sebi_fraud
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - sebi-data-net
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sebi -d sebi_fraud"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  # ── Redis In-Memory Cache & Broker ────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: sebi-redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data
+    networks:
+      - sebi-data-net
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  # ── MinIO S3 Object Storage ──────────────────────────────────────────────
+  minio:
+    image: minio/minio
+    container_name: sebi-minio
+    restart: unless-stopped
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    volumes:
+      - miniodata:/data
+    networks:
+      - sebi-data-net
+    command: server /data --console-address ":9001"
+
+  # ── Qdrant Vector Database ────────────────────────────────────────────────
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: sebi-qdrant
+    restart: unless-stopped
+    ports:
+      - "6333:6333"
+      - "6334:6334"
+    volumes:
+      - qdrantdata:/qdrant/storage
+    networks:
+      - sebi-data-net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:6333/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # ── MLflow Tracking Server ────────────────────────────────────────────────
+  mlflow:
+    image: ghcr.io/mlflow/mlflow:v2.14.1
+    container_name: sebi-mlflow
+    restart: unless-stopped
+    ports:
+      - "5000:5000"
+    volumes:
+      - mlflowdata:/mlflow
+    networks:
+      - sebi-backend-net
+      - sebi-data-net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5000/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    command: mlflow server --host 0.0.0.0 --port 5000 --backend-store-uri sqlite:////mlflow/mlflow.db --default-artifact-root /mlflow/artifacts
+
+  # ── RabbitMQ Event Bus ────────────────────────────────────────────────────
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    container_name: sebi-rabbitmq
+    restart: unless-stopped
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    volumes:
+      - rabbitmqdata:/var/lib/rabbitmq
+    networks:
+      - sebi-backend-net
+      - sebi-data-net
+    healthcheck:
+      test: ["CMD", "rabbitmq-diagnostics", "-q", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # ── Neo4j Fraud Intelligence Graph ───────────────────────────────────────
+  neo4j:
+    image: neo4j:5-community
+    container_name: sebi-neo4j
+    restart: unless-stopped
+    ports:
+      - "7474:7474"
+      - "7687:7687"
+    environment:
+      - NEO4J_AUTH=neo4j/sebi_graph_secret
+    volumes:
+      - neo4jdata:/data
+    networks:
+      - sebi-backend-net
+      - sebi-data-net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:7474"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # ── Prometheus Monitoring Server ──────────────────────────────────────────
+  prometheus:
+    image: prom/prometheus:latest
+    container_name: sebi-prometheus
+    restart: unless-stopped
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+      - prometheusdata:/prometheus
+    networks:
+      - sebi-backend-net
+      - sebi-data-net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9090/-/healthy"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # ── Grafana Visualization Dashboards ─────────────────────────────────────
+  grafana:
+    image: grafana/grafana:latest
+    container_name: sebi-grafana
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=sebi_grafana_secret
+      - GF_USERS_ALLOW_SIGN_UP=false
+    volumes:
+      - ./grafana/datasources:/etc/grafana/provisioning/datasources
+      - ./grafana/dashboards:/etc/grafana/provisioning/dashboards
+      - grafanadata:/var/lib/grafana
+    networks:
+      - sebi-frontend-net
+      - sebi-backend-net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/api/health"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+
+  # ── Jaeger Distributed Tracing ───────────────────────────────────────────
+  jaeger:
+    image: jaegertracing/all-in-one:latest
+    container_name: sebi-jaeger
+    restart: unless-stopped
+    ports:
+      - "16686:16686"
+      - "4317:4317"
+      - "4318:4318"
+    environment:
+      - COLLECTOR_OTLP_ENABLED=true
+    networks:
+      - sebi-frontend-net
+      - sebi-backend-net
+
+  # ── Grafana Loki Log Aggregation ──────────────────────────────────────────
+  loki:
+    image: grafana/loki:latest
+    container_name: sebi-loki
+    restart: unless-stopped
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./loki/loki.yml:/etc/loki/local-config.yaml
+      - lokidata:/tmp/loki
+    networks:
+      - sebi-backend-net
+      - sebi-data-net
+
+  # ── Promtail Log Collector ────────────────────────────────────────────────
+  promtail:
+    image: grafana/promtail:latest
+    container_name: sebi-promtail
+    restart: unless-stopped
+    volumes:
+      - ./loki/promtail.yml:/etc/promtail/config.yml
+      - /var/log:/var/log
+    networks:
+      - sebi-backend-net
+    depends_on:
+      - loki
+
+networks:
+  sebi-frontend-net:
+    driver: bridge
+  sebi-backend-net:
+    driver: bridge
+  sebi-data-net:
+    driver: bridge
+
+volumes:
+  pgdata:
+  redisdata:
+  miniodata:
+  qdrantdata:
+  mlflowdata:
+  rabbitmqdata:
+  neo4jdata:
+  prometheusdata:
+  grafanadata:
+  lokidata:

@@ -1,0 +1,467 @@
+<!DOCTYPE html><html class="dark" lang="en"><head><meta charset="utf-8"><meta content="width=device-width, initial-scale=1.0" name="viewport"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=JetBrains+Mono:wght@500;700&amp;family=Geist:wght@400;600;700&amp;family=Bodoni+Moda:ital,wght@0,400..900;1,400..900&amp;family=Domine:wght@400;700&amp;display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=block" rel="stylesheet"><script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script><script id="tailwind-config">try{
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                "outline-variant": "#a9b4b1",
+                "on-error-container": "#6e0a12",
+                "on-primary": "#e3fff7",
+                "secondary-fixed-dim": "#bfdad3",
+                "tertiary-fixed-dim": "#a9dcf0",
+                "secondary-dim": "#405852",
+                "secondary": "#4b645e",
+                "on-surface-variant": "#57615e",
+                "on-error": "#fff7f6",
+                "tertiary-container": "#b7eaff",
+                "surface-container-highest": "#dae5e1",
+                "secondary-container": "#cde8e1",
+                "on-tertiary-container": "#235869",
+                "on-secondary-fixed-variant": "#48605b",
+                "error": "#a83836",
+                "on-background": "#2a3532",
+                "surface": "#f6faf8",
+                "surface-container-low": "#eef5f2",
+                "on-primary-container": "#095c51",
+                "tertiary-fixed": "#b7eaff",
+                "surface-container-lowest": "#ffffff",
+                "surface-container": "#e7f0ec",
+                "surface-dim": "#d1dcd8",
+                "tertiary-dim": "#25596a",
+                "on-tertiary-fixed-variant": "#2e6273",
+                "on-surface": "#2a3532",
+                "primary": "#206a5e",
+                "inverse-on-surface": "#999e9c",
+                "surface-bright": "#f6faf8",
+                "surface-container-high": "#e1eae7",
+                "on-tertiary": "#f1faff",
+                "primary-fixed-dim": "#9be2d2",
+                "inverse-primary": "#b7ffef",
+                "error-dim": "#67040d",
+                "outline": "#727d7a",
+                "error-container": "#fa746f",
+                "surface-tint": "#206a5e",
+                "primary-fixed": "#a9f0e0",
+                "on-secondary-container": "#3e5651",
+                "on-primary-fixed": "#00483e",
+                "secondary-fixed": "#cde8e1",
+                "on-tertiary-fixed": "#074556",
+                "on-secondary-fixed": "#2c443f",
+                "tertiary": "#326677",
+                "inverse-surface": "#0a0f0e",
+                "primary-dim": "#0d5e52",
+                "background": "#f6faf8",
+                "on-primary-fixed-variant": "#1b665a",
+                "primary-container": "#a9f0e0",
+                "on-secondary": "#e3fff7",
+                "surface-variant": "#dae5e1"
+            },
+            "borderRadius": {
+                "DEFAULT": "0.25rem",
+                "lg": "0.5rem",
+                "xl": "0.75rem",
+                "full": "9999px"
+            },
+            "spacing": {
+                "stack-lg": "32px",
+                "stack-md": "16px",
+                "container-padding": "24px",
+                "unit": "4px",
+                "gutter": "16px",
+                "stack-sm": "8px"
+            },
+            "fontFamily": {
+                "display-lg": ["Bodoni Moda"],
+                "body-sm": ["Domine"],
+                "data-mono": ["JetBrains Mono"],
+                "headline-md": ["Bodoni Moda"],
+                "label-caps": ["JetBrains Mono"],
+                "headline-sm": ["Bodoni Moda"],
+                "body-lg": ["Domine"]
+            },
+            "fontSize": {
+                "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                "body-sm": ["14px", {"lineHeight": "22px", "fontWeight": "400"}],
+                "data-mono": ["13px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                "label-caps": ["11px", {"lineHeight": "16px", "letterSpacing": "0.06em", "fontWeight": "700"}],
+                "headline-sm": ["18px", {"lineHeight": "24px", "fontWeight": "600"}],
+                "body-lg": ["16px", {"lineHeight": "26px", "fontWeight": "400"}]
+            }
+          },
+        },
+      }
+    }catch(_e){}</script></head><body class="flex flex-col bg-background text-on-surface transition-colors duration-300">
+<!-- Global TopNavBar -->
+<header class="docked full-width top-0 sticky z-50 bg-surface/80 dark:bg-inverse-surface/80 backdrop-blur-md border-b border-outline-variant/30 dark:border-outline/20 shadow-sm transition-all duration-300 ease-in-out">
+<div class="flex justify-between items-center px-container-padding py-4 w-full max-w-full">
+<div class="flex items-center gap-8">
+<h1 class="font-display-lg text-headline-md tracking-tight text-primary dark:text-primary-fixed-dim">SEBI Sentinel AI</h1>
+<nav class="hidden md:flex items-center gap-6">
+<a href="#" class="font-headline-sm text-headline-sm text-primary font-bold border-b-2 border-primary pb-1 transition-all">Analysis Nexus</a>
+<a href="#" class="font-headline-sm text-headline-sm text-on-surface-variant hover:text-primary transition-colors duration-200">Threat Intelligence</a>
+<a href="#" class="font-headline-sm text-headline-sm text-on-surface-variant hover:text-primary transition-colors duration-200">Complaint Assistant</a>
+</nav>
+</div>
+<div class="flex items-center gap-4">
+<div class="relative w-64 hidden lg:block">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant scale-75" data-icon="search">search</span>
+<input class="w-full bg-surface-container-low border-outline-variant rounded-lg pl-9 pr-4 py-1.5 text-xs focus:ring-1 focus:ring-primary outline-none" placeholder="Search global signatures..." type="text">
+</div>
+<div class="flex items-center gap-3">
+<button class="p-2 hover:bg-surface-container-low dark:hover:bg-secondary-dim/20 rounded-lg transition-all">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="notifications">notifications</span>
+</button>
+<button class="p-2 hover:bg-surface-container-low dark:hover:bg-secondary-dim/20 rounded-lg transition-all">
+<span class="material-symbols-outlined text-on-surface-variant" data-icon="shield">shield</span>
+</button>
+<div class="h-8 w-px bg-outline-variant/30 mx-1"></div>
+<button class="flex items-center gap-2 px-3 py-1.5 hover:bg-surface-container-low dark:hover:bg-secondary-dim/20 rounded-lg transition-all">
+<span class="material-symbols-outlined text-primary" data-icon="account_circle">account_circle</span>
+<span class="font-label-caps text-xs hidden sm:inline">User Settings</span>
+</button>
+</div>
+</div>
+</div>
+</header>
+<div class="flex flex-1">
+<!-- SideNavBar -->
+<aside class="hidden lg:flex flex-col h-[calc(100vh-73px)] w-64 sticky top-[73px] bg-surface-container-low dark:bg-surface-dim border-r border-outline-variant py-6">
+<div class="px-6 mb-8 flex flex-col items-center text-center">
+<div class="w-20 h-20 mb-4 rounded-xl overflow-hidden shadow-lg border border-outline-variant/20">
+<img src="https://lh3.googleusercontent.com/aida/AP1WRLtlBfiOscMcm5H-lMWtWlshgMjCDLWUz5sNG8BuvvgQQCJvRlCvs17l6jMs3Y_7IWMqBQ_IAsT02HfZ28pVotZpGFTKs-6E3lMDQFN6TynBogQfaqgVPUpp60BrgngyvO62k7CyOf6ILxtYe218sDh9Jr7VzP6hKMBOItRuKs2jUXQdcHh6jRn2RmXw0PGUypltN9n4x1f8TC_UuP3sBocvBd1Ria9fh2kvNVFznzz-HIuEiuqF-SrS1Q" alt="Sentinel System Logo" class="w-full h-full object-cover">
+</div>
+<h2 class="font-headline-sm text-on-surface">Sentinel Core</h2>
+<p class="font-label-caps text-[10px] text-on-surface-variant tracking-widest opacity-70">Institutional Grade AI</p>
+</div>
+<nav class="flex-1 px-4 space-y-1">
+<a class="flex items-center gap-3 px-4 py-2.5 bg-primary-container text-on-primary-container rounded-r-full font-bold transition-all" href="#">
+<span class="material-symbols-outlined scale-90" data-icon="dashboard">dashboard</span>
+<span class="font-label-caps text-label-caps">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2.5 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors" href="#">
+<span class="material-symbols-outlined scale-90" data-icon="hub">hub</span>
+<span class="font-label-caps text-label-caps">Global Nexus</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2.5 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors" href="#">
+<span class="material-symbols-outlined scale-90" data-icon="security">security</span>
+<span class="font-label-caps text-label-caps">Intelligence</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2.5 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors" href="#">
+<span class="material-symbols-outlined scale-90" data-icon="assignment_late">assignment_late</span>
+<span class="font-label-caps text-label-caps">Reporting</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-2.5 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors" href="#">
+<span class="material-symbols-outlined scale-90" data-icon="settings">settings</span>
+<span class="font-label-caps text-label-caps">Settings</span>
+</a>
+</nav>
+<div class="px-6 mt-auto space-y-4">
+<button class="w-full py-3 bg-primary text-on-primary rounded-lg font-bold shadow-md hover:opacity-90 active:scale-95 transition-all flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-sm" data-icon="add">add</span>
+                New Analysis
+            </button>
+<div class="pt-4 border-t border-outline-variant/30 flex justify-around">
+<button title="Support" class="text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined" data-icon="help_outline">help_outline</span></button>
+<button title="API Docs" class="text-on-surface-variant hover:text-primary transition-colors"><span class="material-symbols-outlined" data-icon="code">code</span></button>
+</div>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="flex-1 min-h-screen">
+<div class="p-container-padding grid grid-cols-12 gap-gutter">
+<!-- Hero Row: Heatmap & Market Index -->
+<div class="col-span-12 lg:col-span-8 flex flex-col gap-gutter">
+<section class="glass-card rounded-xl p-stack-md relative overflow-hidden h-[450px]">
+<div class="flex justify-between items-center mb-4 relative z-10">
+<div>
+<h2 class="font-headline-sm text-headline-sm text-primary">Live Fraud Heatmap</h2>
+<p class="text-xs text-on-surface-variant font-label-caps tracking-widest">GEOGRAPHICAL CONCENTRATIONS • REAL-TIME</p>
+</div>
+<div class="flex gap-2">
+<span class="px-3 py-1 bg-error-container text-on-error-container text-[10px] rounded-full font-bold uppercase tracking-wider animate-pulse border border-error/20">Critical: Mumbai Region</span>
+</div>
+</div>
+<!-- Map Placeholder -->
+<div class="absolute inset-0 z-0 opacity-30 mix-blend-screen" data-location="India">
+<div class="w-full h-full bg-[url('placeholder')] bg-cover bg-center" data-alt="A dark, high-contrast digital map of India with luminous glowing hot spots in red and cyan."></div>
+</div>
+<!-- Heatmap Points Overlay -->
+<div class="absolute inset-0 pointer-events-none">
+<div class="absolute top-[60%] left-[25%] w-16 h-16 bg-error/20 rounded-full blur-xl animate-pulse"></div>
+<div class="absolute top-[45%] left-[65%] w-24 h-24 bg-secondary-container/20 rounded-full blur-2xl"></div>
+<div class="absolute top-[30%] left-[40%] w-12 h-12 bg-error/40 rounded-full blur-lg animate-pulse"></div>
+</div>
+<div class="scan-line"></div>
+</section>
+<section class="glass-card rounded-xl p-stack-md bg-surface-container-low/50">
+<div class="flex justify-between items-end mb-8">
+<div>
+<h2 class="font-headline-sm text-headline-sm text-primary">Market Risk Index</h2>
+<p class="text-xs text-on-surface-variant font-label-caps">LAST 30 DAYS FRAUD VOLUME AGGREGATE</p>
+</div>
+<div class="text-right">
+<div class="flex items-center justify-end gap-2">
+<span class="font-data-mono text-display-lg text-primary">84.2</span>
+<div class="flex flex-col">
+<span class="font-label-caps text-error text-[10px] font-bold">↑ 12.4%</span>
+<span class="font-label-caps text-on-surface-variant text-[8px]">RISK DELTA</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Refreshed Chart Simulation -->
+<div class="h-48 w-full flex items-end gap-2 px-2 relative">
+<div class="absolute inset-0 grid grid-rows-4 pointer-events-none">
+<div class="border-t border-outline-variant/10"></div>
+<div class="border-t border-outline-variant/10"></div>
+<div class="border-t border-outline-variant/10"></div>
+<div class="border-t border-outline-variant/10"></div>
+</div>
+<!-- Professional Styled Bars -->
+<div class="bg-primary/20 hover:bg-primary/40 w-full h-[60%] transition-all rounded-t-sm relative group cursor-pointer">
+<div class="absolute -top-6 left-1/2 -translate-x-1/2 bg-surface text-[10px] px-1.5 py-0.5 rounded opacity-0 group-hover:opacity-100 transition-opacity border border-outline-variant">42.1</div>
+</div>
+<div class="bg-primary/20 hover:bg-primary/40 w-full h-[55%] transition-all rounded-t-sm relative group cursor-pointer"></div>
+<div class="bg-primary/20 hover:bg-primary/40 w-full h-[65%] transition-all rounded-t-sm relative group cursor-pointer"></div>
+<div class="bg-primary/20 hover:bg-primary/40 w-full h-[40%] transition-all rounded-t-sm relative group cursor-pointer"></div>
+<div class="bg-primary/20 hover:bg-primary/40 w-full h-[75%] transition-all rounded-t-sm relative group cursor-pointer"></div>
+<div class="bg-error/30 hover:bg-error/50 w-full h-[95%] transition-all rounded-t-sm relative group cursor-pointer"></div>
+<div class="bg-primary/20 hover:bg-primary/40 w-full h-[70%] transition-all rounded-t-sm relative group cursor-pointer"></div>
+<div class="bg-primary/20 hover:bg-primary/40 w-full h-[62%] transition-all rounded-t-sm relative group cursor-pointer"></div>
+<div class="bg-primary/20 hover:bg-primary/40 w-full h-[58%] transition-all rounded-t-sm relative group cursor-pointer"></div>
+<div class="bg-primary/20 hover:bg-primary/40 w-full h-[85%] transition-all rounded-t-sm relative group cursor-pointer"></div>
+<div class="bg-primary/20 hover:bg-primary/40 w-full h-[66%] transition-all rounded-t-sm relative group cursor-pointer"></div>
+<div class="bg-error/40 hover:bg-error/60 w-full h-[100%] transition-all rounded-t-sm relative group cursor-pointer shadow-[0_0_15px_rgba(168,56,54,0.2)]">
+<div class="absolute -top-6 left-1/2 -translate-x-1/2 bg-error-container text-on-error-container text-[10px] px-1.5 py-0.5 rounded border border-error/20">PEAK</div>
+</div>
+</div>
+<div class="flex justify-between mt-4 font-data-mono text-[10px] text-on-surface-variant uppercase tracking-widest px-2">
+<span>Day 0</span>
+<span>Day 15</span>
+<span>Active</span>
+</div>
+</section>
+</div>
+<!-- Side Column: Real-time Alerts & Risk Gauges -->
+<div class="col-span-12 lg:col-span-4 flex flex-col gap-gutter">
+<!-- Risk Gauges -->
+<section class="glass-card rounded-xl p-stack-md bg-surface-container-low/50">
+<h3 class="font-label-caps text-on-surface-variant mb-6 flex justify-between">
+<span>SYSTEM VIGILANCE</span>
+<span class="text-primary">ONLINE</span>
+</h3>
+<div class="flex items-center justify-around">
+<div class="text-center">
+<div class="relative w-32 h-32 flex items-center justify-center">
+<svg class="w-full h-full -rotate-90">
+<circle cx="64" cy="64" fill="none" r="54" stroke="rgba(0,0,0,0.05)" class="dark:stroke-white/5" stroke-width="8"></circle>
+<circle class="risk-gauge-arc" cx="64" cy="64" fill="none" r="54" stroke="url(#cyan-gradient)" stroke-dasharray="339.29" stroke-dashoffset="33.9" stroke-width="8" stroke-linecap="round"></circle>
+<defs>
+<linearGradient id="cyan-gradient" x1="0%" x2="100%" y1="0%" y2="0%">
+<stop offset="0%" style="stop-color:var(--detection-cyan);stop-opacity:1"></stop>
+<stop offset="100%" style="stop-color:var(--guardian-blue);stop-opacity:1"></stop>
+</linearGradient>
+</defs>
+</svg>
+<div class="absolute flex flex-col items-center">
+<span class="font-data-mono text-headline-md text-primary">92%</span>
+<span class="text-[9px] font-label-caps text-on-surface-variant">CONFIDENCE</span>
+</div>
+</div>
+</div>
+<div class="space-y-4">
+<div class="flex items-center gap-3">
+<div class="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
+<span class="text-[11px] font-label-caps text-on-surface-variant">Network</span>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-2 h-2 rounded-full bg-primary animate-pulse" style="animation-delay: 0.5s"></div>
+<span class="text-[11px] font-label-caps text-on-surface-variant">Deepfake</span>
+</div>
+<div class="flex items-center gap-3">
+<div class="w-2 h-2 rounded-full bg-primary animate-pulse" style="animation-delay: 1s"></div>
+<span class="text-[11px] font-label-caps text-on-surface-variant">Endpoint</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Real-time Alerts Feed - Refreshed -->
+<section class="glass-card rounded-xl flex-1 flex flex-col overflow-hidden bg-surface-container-low/30 border-primary/10">
+<div class="p-4 border-b border-outline-variant/30 bg-surface-container/50 flex justify-between items-center">
+<h2 class="font-headline-sm text-headline-sm text-primary flex items-center gap-2">
+<span class="material-symbols-outlined" data-icon="radar">radar</span>
+                            Sentinel Feed
+                        </h2>
+<span class="font-data-mono text-[10px] text-primary px-2.5 py-1 bg-primary/10 rounded-full border border-primary/20">LIVE OPS</span>
+</div>
+<div class="flex-1 overflow-y-auto p-4 space-y-4">
+<!-- Refreshed Alert Item -->
+<div class="p-3 bg-surface/40 border-l-4 border-error rounded-r-lg shadow-sm group hover:bg-surface transition-colors border-y border-r border-outline-variant/10">
+<div class="flex justify-between items-start mb-2">
+<span class="font-label-caps text-[9px] px-1.5 py-0.5 bg-error-container text-on-error-container rounded font-bold">PHISHING DOMAIN</span>
+<span class="font-data-mono text-[9px] text-on-surface-variant opacity-60">12:04:15</span>
+</div>
+<p class="font-data-mono text-sm text-on-surface mb-2 font-bold truncate">sebi-investment-kyc.net</p>
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[12px] text-primary" data-icon="sync">sync</span>
+<span class="text-[10px] font-label-caps text-primary">Takedown Protocol Active</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer text-sm" data-icon="open_in_new">open_in_new</span>
+</div>
+</div>
+<!-- Alert Item -->
+<div class="p-3 bg-surface/40 border-l-4 border-primary rounded-r-lg shadow-sm group hover:bg-surface transition-colors border-y border-r border-outline-variant/10">
+<div class="flex justify-between items-start mb-2">
+<span class="font-label-caps text-[9px] px-1.5 py-0.5 bg-primary-container text-on-primary-container rounded font-bold">TELEGRAM CHANNEL</span>
+<span class="font-data-mono text-[9px] text-on-surface-variant opacity-60">11:58:22</span>
+</div>
+<p class="font-data-mono text-sm text-on-surface mb-2 font-bold truncate">@SEBI_Gold_Official_Inv</p>
+<div class="flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[12px] text-on-surface-variant" data-icon="verified">verified</span>
+<span class="text-[10px] font-label-caps text-on-surface-variant">Marked as Fraud Tier-2</span>
+</div>
+</div>
+<!-- Alert Item -->
+<div class="p-3 bg-surface/40 border-l-4 border-error rounded-r-lg shadow-sm group hover:bg-surface transition-colors border-y border-r border-outline-variant/10">
+<div class="flex justify-between items-start mb-2">
+<span class="font-label-caps text-[9px] px-1.5 py-0.5 bg-error-container text-on-error-container rounded font-bold">MALICIOUS IP</span>
+<span class="font-data-mono text-[9px] text-on-surface-variant opacity-60">11:45:01</span>
+</div>
+<p class="font-data-mono text-sm text-on-surface font-bold truncate">192.168.44.120 (Botnet)</p>
+</div>
+<!-- Alert Item -->
+<div class="p-3 bg-surface/40 border-l-4 border-primary rounded-r-lg shadow-sm group hover:bg-surface transition-colors border-y border-r border-outline-variant/10">
+<div class="flex justify-between items-start mb-2">
+<span class="font-label-caps text-[9px] px-1.5 py-0.5 bg-primary-container text-on-primary-container rounded font-bold">WHATSAPP GROUP</span>
+<span class="font-data-mono text-[9px] text-on-surface-variant opacity-60">11:30:55</span>
+</div>
+<p class="font-data-mono text-sm text-on-surface font-bold truncate">Elite Stock Tips (Reported)</p>
+</div>
+</div>
+</section>
+</div>
+<!-- Bottom Row: Emerging Trends -->
+<div class="col-span-12 mt-4">
+<div class="flex justify-between items-center mb-6">
+<h2 class="font-headline-md text-headline-md text-primary">Emerging Scam Trends</h2>
+<button class="flex items-center gap-2 px-4 py-2 hover:bg-surface-container-low rounded-lg text-on-surface-variant hover:text-primary transition-all">
+<span class="text-xs font-label-caps tracking-widest">VIEW ALL ANALYTICS</span>
+<span class="material-symbols-outlined text-sm" data-icon="arrow_forward">arrow_forward</span>
+</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+<!-- Trend Card 1 -->
+<div class="glass-card rounded-xl p-0 overflow-hidden flex flex-col h-full group border-outline-variant/20">
+<div class="h-32 bg-surface-container relative overflow-hidden">
+<div class="absolute inset-0 bg-[url('placeholder')]" data-alt="A macro digital rendering of a fraudulent government document."></div>
+<div class="absolute inset-0 bg-gradient-to-t from-background to-transparent"></div>
+<div class="absolute bottom-3 left-4">
+<span class="bg-error/10 text-error text-[9px] px-2 py-0.5 rounded-full font-bold border border-error/20">HIGH THREAT</span>
+</div>
+</div>
+<div class="p-5 flex-1">
+<h3 class="font-headline-sm text-headline-sm mb-2 group-hover:text-primary transition-colors">Fake SEBI Circulars</h3>
+<p class="font-body-sm text-on-surface-variant text-sm mb-6 leading-relaxed">Highly sophisticated PDF documents mimicking SEBI logos are being circulated via encrypted email to solicit 'compliance fees'.</p>
+<div class="flex items-center justify-between border-t border-outline-variant/20 pt-4 mt-auto">
+<span class="font-data-mono text-[10px] text-primary bg-primary/5 px-2 py-0.5 rounded">SHAP: 0.85</span>
+<span class="material-symbols-outlined text-on-surface-variant group-hover:translate-x-1 transition-transform" data-icon="chevron_right">chevron_right</span>
+</div>
+</div>
+</div>
+<!-- Trend Card 2 -->
+<div class="glass-card rounded-xl p-0 overflow-hidden flex flex-col h-full group border-outline-variant/20">
+<div class="h-32 bg-surface-container relative overflow-hidden">
+<div class="absolute inset-0 bg-[url('placeholder')]" data-alt="A distorted digital glitch portrait suggesting a deepfake AI generation."></div>
+<div class="absolute inset-0 bg-gradient-to-t from-background to-transparent"></div>
+<div class="absolute bottom-3 left-4">
+<span class="bg-primary/10 text-primary text-[9px] px-2 py-0.5 rounded-full font-bold border border-primary/20">AI DRIVEN</span>
+</div>
+</div>
+<div class="p-5 flex-1">
+<h3 class="font-headline-sm text-headline-sm mb-2 group-hover:text-primary transition-colors">Deepfake Video Ads</h3>
+<p class="font-body-sm text-on-surface-variant text-sm mb-6 leading-relaxed">AI-generated videos of financial influencers endorsing fraudulent stock-picking apps on major social platforms.</p>
+<div class="flex items-center justify-between border-t border-outline-variant/20 pt-4 mt-auto">
+<span class="font-data-mono text-[10px] text-primary bg-primary/5 px-2 py-0.5 rounded">SHAP: 0.92</span>
+<span class="material-symbols-outlined text-on-surface-variant group-hover:translate-x-1 transition-transform" data-icon="chevron_right">chevron_right</span>
+</div>
+</div>
+</div>
+<!-- Trend Card 3 -->
+<div class="glass-card rounded-xl p-0 overflow-hidden flex flex-col h-full group border-outline-variant/20">
+<div class="h-32 bg-surface-container relative overflow-hidden">
+<div class="absolute inset-0 bg-[url('placeholder')]" data-alt="A smartphone screen displaying a crowded messaging app group chat."></div>
+<div class="absolute inset-0 bg-gradient-to-t from-background to-transparent"></div>
+<div class="absolute bottom-3 left-4">
+<span class="bg-primary/10 text-primary text-[9px] px-2 py-0.5 rounded-full font-bold border border-primary/20">SOCIAL ENGINEERING</span>
+</div>
+</div>
+<div class="p-5 flex-1">
+<h3 class="font-headline-sm text-headline-sm mb-2 group-hover:text-primary transition-colors">WhatsApp Shadow Groups</h3>
+<p class="font-body-sm text-on-surface-variant text-sm mb-6 leading-relaxed">Infiltration of private messaging groups by bot accounts promising 500% returns on 'unlisted' penny stocks.</p>
+<div class="flex items-center justify-between border-t border-outline-variant/20 pt-4 mt-auto">
+<span class="font-data-mono text-[10px] text-primary bg-primary/5 px-2 py-0.5 rounded">SHAP: 0.78</span>
+<span class="material-symbols-outlined text-on-surface-variant group-hover:translate-x-1 transition-transform" data-icon="chevron_right">chevron_right</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Global Footer -->
+<footer class="w-full px-container-padding py-stack-lg flex flex-col md:flex-row justify-between items-center bg-surface-container-highest dark:bg-inverse-surface border-t border-outline-variant/50 transition-colors duration-300">
+<div class="flex flex-col md:items-start items-center mb-6 md:mb-0">
+<h3 class="font-headline-sm text-primary mb-2">SEBI Sentinel Intelligence</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant text-center md:text-left max-w-md opacity-80 hover:opacity-100 transition-opacity">© 2024 SEBI Sentinel Intelligence. Institutional Cybersecurity Framework. Managed by Regulatory Oversight AI Division.</p>
+</div>
+<nav class="flex flex-wrap justify-center gap-x-6 gap-y-2">
+<a href="#" class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors underline decoration-primary/50 underline-offset-4">SEBI Official</a>
+<a href="#" class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors underline decoration-primary/50 underline-offset-4">Legal Disclosures</a>
+<a href="#" class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors underline decoration-primary/50 underline-offset-4">Resource Hub</a>
+<a href="#" class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors underline decoration-primary/50 underline-offset-4">Privacy Policy</a>
+<a href="#" class="font-body-sm text-body-sm text-on-surface-variant hover:text-primary transition-colors underline decoration-primary/50 underline-offset-4">Contact Support</a>
+</nav>
+</footer>
+</main>
+</div>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="fixed bottom-0 w-full md:hidden z-50 bg-surface-container-lowest border-t border-outline-variant flex justify-around p-2 shadow-lg">
+<a class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-xl p-2 min-w-[70px]" href="#">
+<span class="material-symbols-outlined" data-icon="radar">radar</span>
+<span class="font-label-caps text-[9px] mt-1">Threats</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant p-2 min-w-[70px]" href="#">
+<span class="material-symbols-outlined" data-icon="insights">insights</span>
+<span class="font-label-caps text-[9px] mt-1">Nexus</span>
+</a>
+<a class="flex flex-col items-center justify-center text-on-surface-variant p-2 min-w-[70px]" href="#">
+<span class="material-symbols-outlined" data-icon="manage_search">manage_search</span>
+<span class="font-label-caps text-[9px] mt-1">Search</span>
+</a>
+</nav>
+<script>
+    // Micro-interaction for alerts and charts
+    document.addEventListener('DOMContentLoaded', () => {
+        const feed = document.querySelector('.overflow-y-auto');
+        
+        // Randomly simulate new alert arriving pulse
+        setInterval(() => {
+            const alerts = feed.querySelectorAll('div[class*="border-l-4"]');
+            const firstAlert = alerts[Math.floor(Math.random() * alerts.length)];
+            if (firstAlert) {
+                firstAlert.classList.add('ring-1', 'ring-primary/30');
+                setTimeout(() => firstAlert.classList.remove('ring-1', 'ring-primary/30'), 1500);
+            }
+        }, 4000);
+
+        // Update gauge on load
+        setTimeout(() => {
+            const arc = document.querySelector('.risk-gauge-arc');
+            if (arc) {
+                arc.style.strokeDashoffset = '27.14'; // Representing 92%
+            }
+        }, 500);
+    });
+</script>
+</body></html>

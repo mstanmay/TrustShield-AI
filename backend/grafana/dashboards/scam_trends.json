@@ -1,0 +1,42 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "title": "Total Scams Detected by Category",
+      "type": "bargauge",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 0 },
+      "targets": [
+        {
+          "expr": "sum(sebi_scams_detected_total) by (threat_type)",
+          "legendFormat": "{{threat_type}}"
+        }
+      ]
+    },
+    {
+      "title": "High Risk Fraud Alerts Triggered",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 0 },
+      "targets": [
+        {
+          "expr": "sum(rate(sebi_high_risk_alerts_total[1m])) by (alert_type)",
+          "legendFormat": "Alert {{alert_type}}"
+        }
+      ]
+    }
+  ],
+  "refresh": "5s",
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": ["sebi", "scam-trends"],
+  "time": { "from": "now-1h", "to": "now" },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "SEBI Trust Platform — Scam Trends & Threat Intelligence Alerts",
+  "uid": "sebi-scam-trends"
+}
