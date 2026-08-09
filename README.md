@@ -20,6 +20,7 @@
 </p>
 
 <p align="center">
+  <a href="#-video-demo">Video Demo</a> •
   <a href="#-quick-start">Quick Start</a> •
   <a href="#-architecture">Architecture</a> •
   <a href="#-tech-stack">Tech Stack</a> •
@@ -29,6 +30,17 @@
 </p>
 
 ---
+
+## 🎬 Video Demo & Interactive Walkthrough
+
+A high-definition video demonstration of the TrustShield AI platform is available in the [`demo/`](demo/) directory:
+
+- 📥 **Download Full HD Video (MP4)**: [`demo/TrustShield_AI_Platform_Demo.mp4`](demo/TrustShield_AI_Platform_Demo.mp4) (1080p @ 30 FPS, 26.9 MB)
+- 🌐 **Interactive Video Player Hub**: Open [`demo/index.html`](demo/index.html) in your browser for the video player with 1-click download.
+- 🖼️ **Interactive HTML Slideshow**: Open [`demo/TrustShield_AI_Demo.html`](demo/TrustShield_AI_Demo.html) for the auto-playing presentation deck.
+
+---
+
 
 ## 🎯 Problem Statement
 

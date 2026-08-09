@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>TrustShield AI — Platform Demo Walkthrough</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg-primary: #0a0f0d;
+      --bg-card: rgba(16, 28, 24, 0.92);
+      --accent: #22c55e;
+      --accent-dim: #166534;
+      --text-primary: #f0fdf4;
+      --text-secondary: #86efac;
+      --text-muted: #6b7280;
+      --border: rgba(34, 197, 94, 0.15);
+      --slide-duration: 5000;
+    }
+
+    body {
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      background: var(--bg-primary);
+      color: var(--text-primary);
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
+
+    /* ── Animated Background ────────────────────────────────────────── */
+    .bg-grid {
+      position: fixed;
+      inset: 0;
+      background-image: 
+        linear-gradient(rgba(34, 197, 94, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(34, 197, 94, 0.03) 1px, transparent 1px);
+      background-size: 60px 60px;
+      z-index: 0;
+    }
+    .bg-glow {
+      position: fixed;
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(34,197,94,0.08) 0%, transparent 70%);
+      border-radius: 50%;
+      top: -200px; left: -200px;
+      animation: floatGlow 20s ease-in-out infinite;
+      z-index: 0;
+    }
+    .bg-glow-2 {
+      top: auto; left: auto;
+      bottom: -300px; right: -200px;
+      animation-delay: -10s;
+    }
+    @keyframes floatGlow {
+      0%, 100% { transform: translate(0, 0); }
+      50% { transform: translate(100px, 80px); }
+    }
+
+    /* ── Header ─────────────────────────────────────────────────────── */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(10, 15, 13, 0.85);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--border);
+      padding: 16px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .logo-icon {
+      width: 36px; height: 36px;
+      background: linear-gradient(135deg, var(--accent), var(--accent-dim));
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 16px;
+      color: #fff;
+    }
+    .logo-text {
+      font-weight: 800;
+      font-size: 18px;
+      letter-spacing: -0.5px;
+    }
+    .logo-text span { color: var(--accent); }
+    .header-badge {
+      background: rgba(34,197,94,0.1);
+      color: var(--text-secondary);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      border: 1px solid var(--border);
+    }
+
+    /* ── Controls ────────────────────────────────────────────────────── */
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .controls button {
+      background: rgba(34,197,94,0.1);
+      color: var(--text-secondary);
+      border: 1px solid var(--border);
+      padding: 8px 18px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+    .controls button:hover {
+      background: rgba(34,197,94,0.2);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .controls button.active {
+      background: var(--accent);
+      color: #000;
+      border-color: var(--accent);
+    }
+
+    /* ── Main Container ─────────────────────────────────────────────── */
+    .container {
+      position: relative;
+      z-index: 1;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 40px 32px;
+    }
+
+    /* ── Slideshow ───────────────────────────────────────────────────── */
+    .slideshow-wrap {
+      position: relative;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: var(--bg-card);
+      box-shadow: 0 0 80px rgba(34,197,94,0.06), 0 20px 60px rgba(0,0,0,0.5);
+    }
+    .slide-viewport {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 10;
+      overflow: hidden;
+    }
+    .slide {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transition: opacity 0.8s ease-in-out;
+    }
+    .slide.active { opacity: 1; }
+    .slide img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top;
+    }
+
+    /* ── Caption Overlay ─────────────────────────────────────────────── */
+    .slide-caption {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 40px 32px 24px;
+      background: linear-gradient(transparent, rgba(0,0,0,0.85));
+    }
+    .slide-caption .badge {
+      display: inline-block;
+      background: var(--accent);
+      color: #000;
+      padding: 4px 12px;
+      border-radius: 6px;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+    .slide-caption h3 {
+      font-size: 22px;
+      font-weight: 700;
+      margin-bottom: 4px;
+      letter-spacing: -0.3px;
+    }
+    .slide-caption p {
+      font-size: 13px;
+      color: #d1d5db;
+      line-height: 1.5;
+      max-width: 600px;
+    }
+
+    /* ── Progress Bar ────────────────────────────────────────────────── */
+    .progress-bar-container {
+      height: 3px;
+      background: rgba(255,255,255,0.08);
+    }
+    .progress-bar {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), #4ade80);
+      width: 0%;
+      transition: width 0.1s linear;
+    }
+
+    /* ── Slide Indicators ────────────────────────────────────────────── */
+    .slide-indicators {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 16px 24px;
+      background: rgba(10,15,13,0.6);
+      flex-wrap: wrap;
+    }
+    .indicator {
+      flex: 1;
+      min-width: 60px;
+      height: 4px;
+      border-radius: 2px;
+      background: rgba(255,255,255,0.1);
+      cursor: pointer;
+      transition: background 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+    .indicator.completed { background: var(--accent); }
+    .indicator.active {
+      background: rgba(255,255,255,0.15);
+    }
+    .indicator.active::after {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      background: var(--accent);
+      animation: indicatorFill var(--anim-duration, 5s) linear forwards;
+    }
+    @keyframes indicatorFill {
+      from { width: 0%; }
+      to { width: 100%; }
+    }
+
+    /* ── Slide Counter ───────────────────────────────────────────────── */
+    .slide-counter {
+      position: absolute;
+      top: 16px;
+      right: 20px;
+      background: rgba(0,0,0,0.5);
+      backdrop-filter: blur(8px);
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 600;
+      color: rgba(255,255,255,0.8);
+      z-index: 10;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    /* ── Download Section ────────────────────────────────────────────── */
+    .download-section {
+      margin-top: 40px;
+      text-align: center;
+    }
+    .download-section h2 {
+      font-size: 24px;
+      font-weight: 700;
+      margin-bottom: 8px;
+      letter-spacing: -0.5px;
+    }
+    .download-section p {
+      color: var(--text-muted);
+      font-size: 14px;
+      margin-bottom: 24px;
+    }
+    .download-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: linear-gradient(135deg, var(--accent), #16a34a);
+      color: #000;
+      padding: 14px 32px;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 700;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.2s, box-shadow 0.2s;
+      font-family: inherit;
+      box-shadow: 0 4px 20px rgba(34,197,94,0.3);
+    }
+    .download-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(34,197,94,0.4);
+    }
+    .download-btn svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    /* ── Features Grid ───────────────────────────────────────────────── */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      margin-top: 40px;
+    }
+    .feature-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 24px;
+      transition: border-color 0.3s;
+    }
+    .feature-card:hover { border-color: rgba(34,197,94,0.4); }
+    .feature-card .icon {
+      width: 40px;
+      height: 40px;
+      background: rgba(34,197,94,0.1);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      margin-bottom: 12px;
+    }
+    .feature-card h4 {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .feature-card p {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* ── Footer ──────────────────────────────────────────────────────── */
+    footer {
+      text-align: center;
+      padding: 40px;
+      color: var(--text-muted);
+      font-size: 12px;
+      border-top: 1px solid var(--border);
+      margin-top: 60px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="bg-grid"></div>
+  <div class="bg-glow"></div>
+  <div class="bg-glow bg-glow-2"></div>
+
+  <header>
+    <div class="logo">
+      <div class="logo-icon">🛡️</div>
+      <div class="logo-text">Trust<span>Shield</span> AI</div>
+    </div>
+    <div class="header-badge">SEBI TechSprint 2026 · Platform Demo</div>
+    <div class="controls">
+      <button id="prevBtn" onclick="prevSlide()">← Prev</button>
+      <button id="playBtn" class="active" onclick="togglePlay()">⏸ Pause</button>
+      <button id="nextBtn" onclick="nextSlide()">Next →</button>
+    </div>
+  </header>
+
+  <div class="container">
+
+    <div class="slideshow-wrap">
+      <div class="progress-bar-container">
+        <div class="progress-bar" id="progressBar"></div>
+      </div>
+
+      <div class="slide-viewport" id="slideViewport">
+        <div class="slide-counter" id="slideCounter">1 / 10</div>
+        <!-- Slides are injected by JS -->
+      </div>
+
+      <div class="slide-indicators" id="indicators"></div>
+    </div>
+
+    <!-- Download Section -->
+    <div class="download-section">
+      <h2>📥 Download This Demo</h2>
+      <p>Save this self-contained HTML demo file — it embeds all screenshots inline and plays offline.</p>
+      <button class="download-btn" onclick="downloadDemo()">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3"/></svg>
+        Download Demo (HTML)
+      </button>
+    </div>
+
+    <!-- Feature Highlights -->
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="icon">🎬</div>
+        <h4>10 Platform Views</h4>
+        <p>Complete walkthrough of Landing, Threat Intelligence, Analysis Nexus, Investigations Portal, and Grievance Wizard.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">🔍</div>
+        <h4>Multi-Agent AI Detection</h4>
+        <p>Deepfake Video, Voice Clone, Forged Document OCR, and Phishing URL analysis running in parallel.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">🕸️</div>
+        <h4>Fraud Graph Intelligence</h4>
+        <p>Cross-market entity graph visualizer showing organized scam networks with XAI forensics attribution.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon">📋</div>
+        <h4>SEBI SCORES Complaints</h4>
+        <p>Automated investor grievance filing with NLP document parsing and real-time ticket tracking.</p>
+      </div>
+    </div>
+
+  </div>
+
+  <footer>
+    © 2026 TrustShield AI · Built for SEBI TechSprint 2026 · AI-Powered Financial Trust & Fraud Intelligence Platform
+  </footer>
+
+  <script>
+    const slides = [
+      {
+        src: 'screenshots/01_landing_hero.png',
+        badge: 'HOME',
+        title: 'Landing Page — Hero & Live Nexus Feed',
+        desc: 'Premium glassmorphism design with live financial trust index (98.42%), volatility pattern detection, and real-time sentinel monitoring.'
+      },
+      {
+        src: 'screenshots/02_landing_cta.png',
+        badge: 'HOME',
+        title: 'Call-to-Action & Multimodal Detection',
+        desc: '"Initialize Investigation" and "View Technical Docs" buttons leading into the SEBI fraud detection pipeline.'
+      },
+      {
+        src: 'screenshots/03_multimodal_detection.png',
+        badge: 'CAPABILITIES',
+        title: 'AI Engine Cards — Video, Audio & Document Analysis',
+        desc: 'Video Synthesis (0.002ms latency), Acoustic Forensics (94.2% accuracy), and Semantic Document Scan (1.2TB/s capacity).'
+      },
+      {
+        src: 'screenshots/04_feature_cards.png',
+        badge: 'CAPABILITIES',
+        title: 'Feature Cards & Live Threat Intelligence',
+        desc: 'Real-time oversight with proactive spoofing detection, anomalous trade aggregation, and social sentiment manipulation alerts.'
+      },
+      {
+        src: 'screenshots/05_threat_intelligence_section.png',
+        badge: 'THREAT INTEL',
+        title: 'Live Threat Intelligence — India Heatmap',
+        desc: 'Global sensor network monitoring with India-wide threat detection map showing active nodes. 02 threats detected across TRUST_SHIELD_01 node.'
+      },
+      {
+        src: 'screenshots/06_analysis_nexus_graph.png',
+        badge: 'ANALYSIS NEXUS',
+        title: 'Cross-Market Entity Graph Visualizer',
+        desc: 'Fraud network visualization: Apex Capital FPI (Risk 88/100, 18 Accounts, ₹148.5 Crore volume), XYZTECH Security, Promoter Shell Corp, and Telegram social group linkages.'
+      },
+      {
+        src: 'screenshots/07_analysis_nexus_footer.png',
+        badge: 'ANALYSIS NEXUS',
+        title: 'XAI Trigger Reason & Evidence Compilation',
+        desc: '"Synchronized off-market transfers preceding XYZTECH earnings release" — Compile Case Dossier with edge types: Synchronized Order Flow, Social Hype Trigger, Shared IP Cluster.'
+      },
+      {
+        src: 'screenshots/08_investigations_portal.png',
+        badge: 'INVESTIGATIONS',
+        title: 'Grievance & Investigation Portal',
+        desc: 'SEBI SCORES complaint wizard with SLA guarantee, Helpline 1800 266 7575, 4-step process (Category → Details → Evidence → Ticket), and Ticket Tracker.'
+      },
+      {
+        src: 'screenshots/09_grievance_wizard.png',
+        badge: 'INVESTIGATIONS',
+        title: 'Grievance Category Selector',
+        desc: 'Categories: Broker Misconduct, Demat Unauthorized Stock Debit, Non-Receipt of Dividend/IPO Refund, Social Media Pump & Dump, Mutual Fund NAV Discrepancy.'
+      },
+      {
+        src: 'screenshots/10_home_overview.png',
+        badge: 'HOME',
+        title: 'Platform Overview — Return to Home',
+        desc: 'Full TrustShield AI platform with glassmorphism navbar, theme switching, and all navigation links to platform modules.'
+      }
+    ];
+
+    let currentSlide = 0;
+    let isPlaying = true;
+    let timer = null;
+    let progressTimer = null;
+    const DURATION = 5000; // 5 seconds per slide
+
+    const viewport = document.getElementById('slideViewport');
+    const indicators = document.getElementById('indicators');
+    const progressBar = document.getElementById('progressBar');
+    const counter = document.getElementById('slideCounter');
+    const playBtn = document.getElementById('playBtn');
+
+    // Create slides
+    slides.forEach((s, i) => {
+      const div = document.createElement('div');
+      div.className = `slide ${i === 0 ? 'active' : ''}`;
+      div.innerHTML = `
+        <img src="${s.src}" alt="${s.title}" loading="${i < 2 ? 'eager' : 'lazy'}">
+        <div class="slide-caption">
+          <div class="badge">${s.badge}</div>
+          <h3>${s.title}</h3>
+          <p>${s.desc}</p>
+        </div>
+      `;
+      viewport.appendChild(div);
+
+      const ind = document.createElement('div');
+      ind.className = `indicator ${i === 0 ? 'active' : ''}`;
+      ind.style.setProperty('--anim-duration', DURATION + 'ms');
+      ind.onclick = () => goToSlide(i);
+      indicators.appendChild(ind);
+    });
+
+    function goToSlide(index) {
+      const slideEls = document.querySelectorAll('.slide');
+      const indEls = document.querySelectorAll('.indicator');
+
+      slideEls[currentSlide].classList.remove('active');
+      indEls[currentSlide].classList.remove('active', 'completed');
+
+      // Mark previous slides as completed
+      for (let j = 0; j < index; j++) {
+        indEls[j].classList.add('completed');
+        indEls[j].classList.remove('active');
+      }
+      for (let j = index; j < slides.length; j++) {
+        indEls[j].classList.remove('completed');
+      }
+
+      currentSlide = index;
+      slideEls[currentSlide].classList.add('active');
+      indEls[currentSlide].classList.add('active');
+      counter.textContent = `${currentSlide + 1} / ${slides.length}`;
+
+      if (isPlaying) startTimer();
+    }
+
+    function nextSlide() {
+      goToSlide((currentSlide + 1) % slides.length);
+    }
+
+    function prevSlide() {
+      goToSlide((currentSlide - 1 + slides.length) % slides.length);
+    }
+
+    function togglePlay() {
+      isPlaying = !isPlaying;
+      playBtn.textContent = isPlaying ? '⏸ Pause' : '▶ Play';
+      playBtn.classList.toggle('active', isPlaying);
+      if (isPlaying) {
+        startTimer();
+      } else {
+        clearTimeout(timer);
+      }
+    }
+
+    function startTimer() {
+      clearTimeout(timer);
+      timer = setTimeout(() => {
+        nextSlide();
+      }, DURATION);
+    }
+
+    function downloadDemo() {
+      // Download this very HTML page
+      const blob = new Blob([document.documentElement.outerHTML], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'TrustShield_AI_Demo_Walkthrough.html';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+
+    // Keyboard navigation
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); nextSlide(); }
+      if (e.key === 'ArrowLeft') { e.preventDefault(); prevSlide(); }
+      if (e.key === 'p' || e.key === 'P') { togglePlay(); }
+    });
+
+    // Start auto-play
+    startTimer();
+  </script>
+</body>
+</html>
