@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>TrustShield AI — Official Platform Video Demo</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <title>TrustShield AI — Official Platform Video Demo Player</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -26,12 +26,13 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 32px 20px;
+      padding: 24px 16px 40px;
     }
 
     .header {
       text-align: center;
-      margin-bottom: 28px;
+      margin-bottom: 24px;
+      max-width: 800px;
     }
 
     .badge {
@@ -59,202 +60,786 @@
     h1 span { color: var(--accent); }
 
     p.subtitle {
-      font-size: 15px;
+      font-size: 14px;
       color: var(--text-muted);
-      max-width: 680px;
       line-height: 1.6;
     }
 
-    .video-container {
+    /* ── Main Video Player Frame ───────────────────────────────────── */
+    .player-wrapper {
       width: 100%;
-      max-width: 1100px;
-      background: var(--card-bg);
-      border: 1px solid var(--border);
-      border-radius: 20px;
-      overflow: hidden;
-      box-shadow: 0 0 60px rgba(34, 197, 94, 0.1), 0 20px 50px rgba(0, 0, 0, 0.6);
-      margin-bottom: 32px;
-    }
-
-    video {
-      width: 100%;
-      height: auto;
-      display: block;
+      max-width: 1120px;
       background: #000;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: 0 0 70px rgba(34, 197, 94, 0.12), 0 24px 60px rgba(0, 0, 0, 0.7);
+      margin-bottom: 28px;
+      position: relative;
     }
 
-    .actions-bar {
-      padding: 20px 28px;
+    .canvas-container {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      background: #050807;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    canvas {
+      width: 100%;
+      height: 100%;
+      display: block;
+      object-fit: contain;
+    }
+
+    /* ── Big Play Center Overlay Button ────────────────────────────── */
+    .big-play-btn {
+      position: absolute;
+      width: 80px;
+      height: 80px;
+      border-radius: 50%;
+      background: rgba(34, 197, 94, 0.9);
+      color: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      box-shadow: 0 0 40px rgba(34, 197, 94, 0.6);
+      transition: transform 0.2s, opacity 0.2s;
+      pointer-events: none;
+      opacity: 0;
+    }
+    .big-play-btn.show {
+      opacity: 1;
+      transform: scale(1.05);
+    }
+
+    /* ── Video Player Controls Bar ─────────────────────────────────── */
+    .controls-bar {
+      background: rgba(10, 18, 14, 0.96);
+      border-top: 1px solid var(--border);
+      padding: 12px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    /* Timeline Seek Bar */
+    .timeline-container {
+      width: 100%;
+      height: 8px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+      cursor: pointer;
+      position: relative;
+      transition: height 0.15s;
+    }
+    .timeline-container:hover {
+      height: 10px;
+    }
+    .timeline-progress {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent), #4ade80);
+      border-radius: 4px;
+      width: 0%;
+      position: relative;
+    }
+    .timeline-handle {
+      position: absolute;
+      right: -6px;
+      top: -3px;
+      width: 14px;
+      height: 14px;
+      background: #fff;
+      border-radius: 50%;
+      box-shadow: 0 0 10px rgba(34, 197, 94, 0.8);
+      opacity: 0;
+      transition: opacity 0.15s;
+    }
+    .timeline-container:hover .timeline-handle {
+      opacity: 1;
+    }
+
+    /* Chapter markers */
+    .chapter-ticks {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      display: flex;
+      justify-content: space-between;
+    }
+    .chapter-tick {
+      width: 2px;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.4);
+    }
+
+    .buttons-row {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      border-top: 1px solid var(--border);
-      background: rgba(8, 15, 12, 0.8);
       flex-wrap: wrap;
-      gap: 16px;
-    }
-
-    .video-info {
-      font-size: 13px;
-      color: var(--text-muted);
-    }
-    .video-info strong {
-      color: var(--text);
-    }
-
-    .btn-group {
-      display: flex;
-      align-items: center;
       gap: 12px;
     }
 
-    .btn {
-      display: inline-flex;
+    .left-controls, .right-controls {
+      display: flex;
       align-items: center;
-      gap: 8px;
-      padding: 12px 24px;
-      border-radius: 10px;
-      font-size: 14px;
-      font-weight: 700;
-      text-decoration: none;
-      transition: all 0.2s;
-      cursor: pointer;
-      font-family: inherit;
+      gap: 10px;
     }
 
-    .btn-primary {
+    .ctrl-btn {
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      color: var(--text);
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+    .ctrl-btn:hover {
+      background: rgba(34, 197, 94, 0.2);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    .ctrl-btn.primary {
       background: var(--accent);
       color: #000;
       border: none;
-      box-shadow: 0 4px 16px rgba(34, 197, 94, 0.3);
     }
-    .btn-primary:hover {
+    .ctrl-btn.primary:hover {
       background: var(--accent-hover);
-      transform: translateY(-2px);
-      box-shadow: 0 6px 22px rgba(34, 197, 94, 0.45);
     }
 
-    .btn-secondary {
+    .time-display {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-left: 6px;
+    }
+    .time-display strong {
+      color: var(--text);
+    }
+
+    /* ── Action Downloads & Export Section ─────────────────────────── */
+    .download-bar {
+      width: 100%;
+      max-width: 1120px;
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+    .download-info h3 {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .download-info p {
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .download-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .dl-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 20px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 700;
+      text-decoration: none;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+    .dl-btn-green {
+      background: linear-gradient(135deg, var(--accent), #16a34a);
+      color: #000;
+      border: none;
+      box-shadow: 0 4px 14px rgba(34, 197, 94, 0.3);
+    }
+    .dl-btn-green:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(34, 197, 94, 0.45);
+    }
+    .dl-btn-outline {
       background: rgba(34, 197, 94, 0.08);
       color: var(--text);
       border: 1px solid var(--border);
     }
-    .btn-secondary:hover {
+    .dl-btn-outline:hover {
       background: rgba(34, 197, 94, 0.16);
       border-color: var(--accent);
     }
 
-    .cases-grid {
+    /* ── Chapter / Case Study Selector Grid ────────────────────────── */
+    .chapters-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 14px;
+      text-align: left;
       width: 100%;
-      max-width: 1100px;
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-      gap: 16px;
-      margin-bottom: 40px;
+      max-width: 1120px;
     }
 
-    .case-card {
+    .chapters-grid {
+      width: 100%;
+      max-width: 1120px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+      gap: 12px;
+      margin-bottom: 36px;
+    }
+
+    .chapter-card {
       background: var(--card-bg);
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 18px;
+      border-radius: 10px;
+      padding: 14px;
+      cursor: pointer;
       transition: all 0.2s;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
     }
-    .case-card:hover {
+    .chapter-card:hover {
       border-color: var(--accent);
       transform: translateY(-2px);
+      background: rgba(20, 36, 30, 0.95);
     }
-    .case-num {
-      font-size: 11px;
+    .chapter-card.active {
+      border-color: var(--accent);
+      background: rgba(34, 197, 94, 0.12);
+    }
+    .chapter-num {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
       font-weight: 800;
       color: var(--accent);
       letter-spacing: 1px;
       margin-bottom: 4px;
       text-transform: uppercase;
     }
-    .case-title {
-      font-size: 14px;
+    .chapter-card h4 {
+      font-size: 13px;
       font-weight: 700;
+      line-height: 1.3;
       margin-bottom: 6px;
     }
-    .case-desc {
-      font-size: 12px;
+    .chapter-time {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 11px;
       color: var(--text-muted);
-      line-height: 1.4;
     }
 
     footer {
       color: var(--text-muted);
       font-size: 12px;
       margin-top: auto;
-      padding-top: 24px;
+      text-align: center;
     }
   </style>
 </head>
 <body>
 
   <div class="header">
-    <div class="badge">🛡️ SEBI TechSprint 2026 · Official Demo</div>
+    <div class="badge">🛡️ SEBI TechSprint 2026 · Official Video Demo</div>
     <h1>Trust<span>Shield</span> AI — Video Walkthrough</h1>
     <p class="subtitle">
-      A comprehensive end-to-end video demonstration of the TrustShield AI platform covering all multi-modal fraud detection engines, the live threat nexus, entity fraud graphs, and SEBI SCORES grievance assistant.
+      Native 1080p video demo demonstrating all multi-modal fraud detection cases, live threat intelligence feeds, cross-market entity fraud graphs, and SEBI SCORES grievance automation.
     </p>
   </div>
 
-  <div class="video-container">
-    <video controls autoplay loop playsinline poster="screenshots/01_landing_hero.png">
-      <source src="TrustShield_AI_Platform_Demo.mp4" type="video/mp4">
-      Your browser does not support the video tag.
-    </video>
+  <!-- Video Player Wrapper -->
+  <div class="player-wrapper" id="playerWrap">
+    
+    <div class="canvas-container" id="canvasContainer" onclick="togglePlay()">
+      <canvas id="videoCanvas" width="1920" height="1080"></canvas>
+      <div class="big-play-btn" id="bigPlayBtn">▶</div>
+    </div>
 
-    <div class="actions-bar">
-      <div class="video-info">
-        <strong>Format:</strong> 1080p HD MP4 (1920x1080 @ 30 FPS) &nbsp;|&nbsp; 
-        <strong>Duration:</strong> ~45s &nbsp;|&nbsp; 
-        <strong>Size:</strong> 26.9 MB
+    <!-- Controls Bar -->
+    <div class="controls-bar">
+      <!-- Progress Seek Bar -->
+      <div class="timeline-container" id="timeline" onclick="seekTimeline(event)">
+        <div class="timeline-progress" id="progressFill">
+          <div class="timeline-handle"></div>
+        </div>
+        <div class="chapter-ticks" id="chapterTicks"></div>
       </div>
-      <div class="btn-group">
-        <a href="TrustShield_AI_Platform_Demo.mp4" download="TrustShield_AI_Platform_Demo.mp4" class="btn btn-primary">
-          <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-          Download MP4 Video
-        </a>
-        <a href="TrustShield_AI_Demo.html" class="btn btn-secondary">
-          Interactive HTML Slideshow →
-        </a>
+
+      <!-- Controls Row -->
+      <div class="buttons-row">
+        <div class="left-controls">
+          <button class="ctrl-btn primary" id="playBtn" onclick="togglePlay()">▶ Play</button>
+          <button class="ctrl-btn" onclick="prevChapter()">⏮ Prev</button>
+          <button class="ctrl-btn" onclick="nextChapter()">⏭ Next</button>
+          <button class="ctrl-btn" onclick="restartVideo()">↺ Replay</button>
+          <div class="time-display">
+            <span id="currentTime">00:00</span> / <strong id="totalTime">00:43</strong>
+          </div>
+        </div>
+
+        <div class="right-controls">
+          <button class="ctrl-btn" id="speedBtn" onclick="cycleSpeed()">1.0x</button>
+          <button class="ctrl-btn" onclick="toggleFullscreen()">⛶ Fullscreen</button>
+        </div>
       </div>
+    </div>
+
+  </div>
+
+  <!-- Download & Action Bar -->
+  <div class="download-bar">
+    <div class="download-info">
+      <h3>📥 Download Official Video Demo</h3>
+      <p>Save the 1080p video demo or export directly in WebM/MP4 format.</p>
+    </div>
+    <div class="download-actions">
+      <button class="dl-btn dl-btn-green" onclick="exportWebMVideo()">
+        <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+        Export Video (WebM)
+      </button>
+      <a href="TrustShield_AI_Platform_Demo.mp4" download="TrustShield_AI_Platform_Demo.mp4" class="dl-btn dl-btn-outline">
+        Download MP4 (26.9 MB)
+      </a>
+      <a href="TrustShield_AI_Demo.html" class="dl-btn dl-btn-outline">
+        HTML Slideshow Deck →
+      </a>
     </div>
   </div>
 
-  <h2 style="font-size: 20px; font-weight: 700; margin-bottom: 16px; text-align: left; width: 100%; max-width: 1100px;">
-    Platform Cases & Capabilities Covered in Demo:
-  </h2>
-
-  <div class="cases-grid">
-    <div class="case-card">
-      <div class="case-num">Case 01 & 02</div>
-      <div class="case-title">Platform Overview & Ingestion</div>
-      <div class="case-desc">Real-time Financial Trust Index (98.42%) and multimodal investigation entrypoint.</div>
-    </div>
-    <div class="case-card">
-      <div class="case-num">Case 03 & 04</div>
-      <div class="case-title">Multimodal Forensic Detection</div>
-      <div class="case-desc">Video synthesis, voice clone analysis, semantic document OCR, and pump-and-dump monitoring.</div>
-    </div>
-    <div class="case-card">
-      <div class="case-num">Case 05 & 06</div>
-      <div class="case-title">Threat Intel & Fraud Graph</div>
-      <div class="case-desc">National threat sensor heatmap, cross-market entity resolution (Apex Capital FPI Rs 148.5 Cr volume).</div>
-    </div>
-    <div class="case-card">
-      <div class="case-num">Case 07 & 08</div>
-      <div class="case-title">XAI Attribution & SCORES Filing</div>
-      <div class="case-desc">Synchronized order flow evidence dossiers and structured 4-step SEBI SCORES complaint wizard.</div>
-    </div>
-  </div>
+  <!-- Chapter Jump Grid -->
+  <h2 class="chapters-title">Jump to Case / Section:</h2>
+  <div class="chapters-grid" id="chaptersGrid"></div>
 
   <footer>
     © 2026 TrustShield AI · Built for SEBI TechSprint 2026 · AI-Powered Financial Trust & Fraud Intelligence Platform
   </footer>
 
+  <script>
+    // Chapter definitions
+    const chapters = [
+      {
+        file: 'screenshots/01_landing_hero.png',
+        tag: 'CASE 1: PLATFORM OVERVIEW',
+        title: 'TrustShield AI — Real-Time Financial Trust Platform',
+        desc: 'Autonomous market oversight engine for retail investors with live Financial Trust Index (98.42%).',
+        duration: 4.0
+      },
+      {
+        file: 'screenshots/02_landing_cta.png',
+        tag: 'CASE 2: INVESTIGATION LAUNCH',
+        title: 'Multi-Modal Ingestion & Investigation Entrypoint',
+        desc: 'Direct access to AI forensic pipelines and regulatory intelligence verification.',
+        duration: 4.0
+      },
+      {
+        file: 'screenshots/03_multimodal_detection.png',
+        tag: 'CASE 3: MULTI-MODAL DETECTION',
+        title: 'Acoustic, Video & Document Forensics Engine',
+        desc: 'Video synthesis analysis (0.002ms), Voice cloning detection (94.2% acc), and Semantic OCR (1.2 TB/s).',
+        duration: 4.5
+      },
+      {
+        file: 'screenshots/04_feature_cards.png',
+        tag: 'CASE 4: SENTINEL VIGILANCE',
+        title: 'Autonomous Scam & Sentiment Analysis',
+        desc: 'Continuous monitoring of social hype groups, pump-and-dump channels, and spoofed circulars.',
+        duration: 4.0
+      },
+      {
+        file: 'screenshots/05_threat_intelligence_section.png',
+        tag: 'CASE 5: THREAT INTELLIGENCE',
+        title: 'Live Sensor Network & National Fraud Heatmap',
+        desc: 'Real-time threat monitoring across CERT-In advisories, spoofed domains, and active incident nodes.',
+        duration: 4.5
+      },
+      {
+        file: 'screenshots/06_analysis_nexus_graph.png',
+        tag: 'CASE 6: FRAUD NETWORK GRAPH',
+        title: 'Cross-Market Entity Graph & XAI Forensics',
+        desc: 'Uncovering organized syndicates: Apex Capital FPI (Risk 88/100, 18 Accounts, Rs 148.5 Cr volume).',
+        duration: 5.0
+      },
+      {
+        file: 'screenshots/07_analysis_nexus_footer.png',
+        tag: 'CASE 7: XAI FEATURE ATTRIBUTION',
+        title: 'Automated Evidence Dossier Compilation',
+        desc: 'Synchronized off-market order flow detection, social hype triggers, and shared IP cluster proofs.',
+        duration: 4.5
+      },
+      {
+        file: 'screenshots/08_investigations_portal.png',
+        tag: 'CASE 8: GRIEVANCE FILING',
+        title: 'SEBI SCORES Grievance & Investigation Portal',
+        desc: 'Structured 4-step investor redressal workflow with SLA guarantee and live registration tracking.',
+        duration: 4.5
+      },
+      {
+        file: 'screenshots/09_grievance_wizard.png',
+        tag: 'CASE 9: COMPLAINT CATEGORIZATION',
+        title: 'Specialized Incident Category Classifier',
+        desc: 'Broker misconduct, unauthorized Demat debits, IPO refund defaults, and social media fraud cases.',
+        duration: 4.0
+      },
+      {
+        file: 'screenshots/10_home_overview.png',
+        tag: 'CASE 10: COMPLETE ECOSYSTEM',
+        title: 'Production-Ready Investor Protection Stack',
+        desc: 'Unified React 19 Frontend + FastAPI Backend with end-to-end multi-agent orchestration.',
+        duration: 4.0
+      }
+    ];
+
+    // Compute start times
+    let totalDuration = 0;
+    chapters.forEach(c => {
+      c.startTime = totalDuration;
+      totalDuration += c.duration;
+    });
+
+    const canvas = document.getElementById('videoCanvas');
+    const ctx = canvas.getContext('2d');
+    const playBtn = document.getElementById('playBtn');
+    const bigPlayBtn = document.getElementById('bigPlayBtn');
+    const progressFill = document.getElementById('progressFill');
+    const currentTimeEl = document.getElementById('currentTime');
+    const totalTimeEl = document.getElementById('totalTime');
+    const speedBtn = document.getElementById('speedBtn');
+    const chaptersGrid = document.getElementById('chaptersGrid');
+    const chapterTicks = document.getElementById('chapterTicks');
+
+    // Preload images
+    const images = [];
+    let imagesLoaded = 0;
+    chapters.forEach((c, i) => {
+      const img = new Image();
+      img.src = c.file;
+      img.onload = () => {
+        imagesLoaded++;
+        if (imagesLoaded === chapters.length) {
+          renderFrame(0);
+        }
+      };
+      images.push(img);
+
+      // Add chapter card
+      const card = document.createElement('div');
+      card.className = `chapter-card ${i === 0 ? 'active' : ''}`;
+      card.id = `card-${i}`;
+      card.onclick = () => seekToChapter(i);
+      card.innerHTML = `
+        <div>
+          <div class="chapter-num">${c.tag.split(':')[0]}</div>
+          <h4>${c.title.split('—')[0]}</h4>
+        </div>
+        <div class="chapter-time">${formatTime(c.startTime)}</div>
+      `;
+      chaptersGrid.appendChild(card);
+
+      // Add chapter tick
+      const tick = document.createElement('div');
+      tick.className = 'chapter-tick';
+      chapterTicks.appendChild(tick);
+    });
+
+    totalTimeEl.textContent = formatTime(totalDuration);
+
+    // Player State
+    let isPlaying = false;
+    let playbackTime = 0;
+    let playbackSpeed = 1.0;
+    let lastTimestamp = null;
+    let animationFrameId = null;
+
+    function formatTime(seconds) {
+      const mins = Math.floor(seconds / 60);
+      const secs = Math.floor(seconds % 60);
+      return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    }
+
+    function togglePlay() {
+      isPlaying = !isPlaying;
+      playBtn.textContent = isPlaying ? '⏸ Pause' : '▶ Play';
+      playBtn.classList.toggle('primary', !isPlaying);
+      bigPlayBtn.classList.toggle('show', !isPlaying);
+
+      if (isPlaying) {
+        lastTimestamp = performance.now();
+        loop();
+      } else {
+        cancelAnimationFrame(animationFrameId);
+      }
+    }
+
+    function loop(now) {
+      if (!isPlaying) return;
+      if (now && lastTimestamp) {
+        const delta = (now - lastTimestamp) / 1000;
+        playbackTime += delta * playbackSpeed;
+        if (playbackTime >= totalDuration) {
+          playbackTime = 0; // loop
+        }
+      }
+      lastTimestamp = now;
+      renderFrame(playbackTime);
+      animationFrameId = requestAnimationFrame(loop);
+    }
+
+    function renderFrame(time) {
+      // Find current chapter
+      let activeIndex = 0;
+      for (let i = 0; i < chapters.length; i++) {
+        if (time >= chapters[i].startTime) {
+          activeIndex = i;
+        }
+      }
+
+      const chapter = chapters[activeIndex];
+      const nextIndex = (activeIndex + 1) % chapters.length;
+      const nextChapter = chapters[nextIndex];
+      const elapsedInChapter = time - chapter.startTime;
+      const remainingInChapter = chapter.duration - elapsedInChapter;
+
+      // Update UI Progress
+      const progressPercent = (time / totalDuration) * 100;
+      progressFill.style.width = `${progressPercent}%`;
+      currentTimeEl.textContent = formatTime(time);
+
+      // Highlight active chapter card
+      document.querySelectorAll('.chapter-card').forEach((el, idx) => {
+        el.classList.toggle('active', idx === activeIndex);
+      });
+
+      // Clear canvas
+      ctx.fillStyle = '#0a0f0d';
+      ctx.fillRect(0, 0, 1920, 1080);
+
+      // Draw Main Screenshot Frame (with smooth crossfade in last 0.8s)
+      const currentImg = images[activeIndex];
+      const nextImg = images[nextIndex];
+
+      const drawImageFit = (img, alpha = 1.0) => {
+        if (!img || !img.complete) return;
+        ctx.globalAlpha = alpha;
+        const targetH = 860;
+        const scale = Math.min(1920 / img.width, targetH / img.height);
+        const nw = img.width * scale;
+        const nh = img.height * scale;
+        const px = (1920 - nw) / 2;
+        const py = 68 + (targetH - nh) / 2;
+        ctx.drawImage(img, px, py, nw, nh);
+      };
+
+      if (remainingInChapter < 0.8 && activeIndex < chapters.length - 1 && nextImg) {
+        const transitionAlpha = (0.8 - remainingInChapter) / 0.8;
+        drawImageFit(currentImg, 1.0 - transitionAlpha);
+        drawImageFit(nextImg, transitionAlpha);
+      } else {
+        drawImageFit(currentImg, 1.0);
+      }
+
+      ctx.globalAlpha = 1.0;
+
+      // Draw Top Header
+      ctx.fillStyle = 'rgba(8, 20, 16, 0.95)';
+      ctx.fillRect(0, 0, 1920, 64);
+      ctx.strokeStyle = 'rgba(34, 197, 94, 0.3)';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(0, 0, 1920, 64);
+
+      // Top Header Text
+      ctx.fillStyle = '#f0fdf4';
+      ctx.font = '700 20px Inter, sans-serif';
+      ctx.fillText('TRUSTSHIELD AI  |  SEBI FINANCIAL TRUST & FRAUD INTELLIGENCE PLATFORM', 36, 40);
+
+      // Top Right Case Pill
+      ctx.fillStyle = 'rgba(34, 197, 94, 0.15)';
+      ctx.strokeStyle = 'rgba(34, 197, 94, 0.6)';
+      ctx.beginPath();
+      ctx.roundRect(1920 - 220, 14, 184, 36, 18);
+      ctx.fill();
+      ctx.stroke();
+
+      ctx.fillStyle = '#86efac';
+      ctx.font = '700 13px JetBrains Mono, monospace';
+      ctx.fillText(`VIEW ${activeIndex + 1} OF ${chapters.length}`, 1920 - 180, 37);
+
+      // Bottom Glassmorphic Overlay Banner
+      const bannerY = 1080 - 150;
+      ctx.fillStyle = 'rgba(6, 12, 10, 0.94)';
+      ctx.fillRect(0, 0, 0);
+      ctx.fillRect(0, bannerY, 1920, 150);
+      ctx.strokeStyle = 'rgba(34, 197, 94, 0.25)';
+      ctx.strokeRect(0, bannerY, 1920, 150);
+
+      // Tag Pill
+      const tagText = chapter.tag;
+      ctx.font = '800 13px Inter, sans-serif';
+      const tagW = ctx.measureText(tagText).width + 24;
+
+      ctx.fillStyle = '#22c55e';
+      ctx.beginPath();
+      ctx.roundRect(40, bannerY + 22, tagW, 30, 6);
+      ctx.fill();
+
+      ctx.fillStyle = '#000000';
+      ctx.fillText(tagText, 52, bannerY + 42);
+
+      // Title & Description
+      ctx.fillStyle = '#f0fdf4';
+      ctx.font = '700 22px Inter, sans-serif';
+      ctx.fillText(chapter.title, 40 + tagW + 20, bannerY + 44);
+
+      ctx.fillStyle = '#94a3b8';
+      ctx.font = '400 16px Inter, sans-serif';
+      ctx.fillText(chapter.desc, 40, bannerY + 95);
+
+      // Bottom Glowing Accent Line
+      const barW = (time / totalDuration) * 1920;
+      ctx.fillStyle = '#22c55e';
+      ctx.fillRect(0, 1080 - 6, barW, 6);
+    }
+
+    function seekTimeline(e) {
+      const rect = document.getElementById('timeline').getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const pct = Math.max(0, Math.min(1, clickX / rect.width));
+      playbackTime = pct * totalDuration;
+      renderFrame(playbackTime);
+    }
+
+    function seekToChapter(index) {
+      playbackTime = chapters[index].startTime;
+      renderFrame(playbackTime);
+      if (!isPlaying) togglePlay();
+    }
+
+    function nextChapter() {
+      let currentIdx = 0;
+      for (let i = 0; i < chapters.length; i++) {
+        if (playbackTime >= chapters[i].startTime) currentIdx = i;
+      }
+      seekToChapter((currentIdx + 1) % chapters.length);
+    }
+
+    function prevChapter() {
+      let currentIdx = 0;
+      for (let i = 0; i < chapters.length; i++) {
+        if (playbackTime >= chapters[i].startTime) currentIdx = i;
+      }
+      seekToChapter((currentIdx - 1 + chapters.length) % chapters.length);
+    }
+
+    function restartVideo() {
+      playbackTime = 0;
+      renderFrame(0);
+      if (!isPlaying) togglePlay();
+    }
+
+    function cycleSpeed() {
+      const speeds = [1.0, 1.5, 2.0, 0.5];
+      const currentIdx = speeds.indexOf(playbackSpeed);
+      playbackSpeed = speeds[(currentIdx + 1) % speeds.length];
+      speedBtn.textContent = `${playbackSpeed.toFixed(1)}x`;
+    }
+
+    function toggleFullscreen() {
+      const wrap = document.getElementById('playerWrap');
+      if (!document.fullscreenElement) {
+        wrap.requestFullscreen().catch(err => alert(err.message));
+      } else {
+        document.exitFullscreen();
+      }
+    }
+
+    // Export WebM Video using Canvas Stream & MediaRecorder
+    function exportWebMVideo() {
+      const btn = event.target;
+      const origText = btn.innerHTML;
+      btn.innerHTML = '⏳ Recording WebM Video...';
+      btn.disabled = true;
+
+      const stream = canvas.captureStream(30); // 30 FPS
+      const recorder = new MediaRecorder(stream, {
+        mimeType: 'video/webm;codecs=vp9',
+        videoBitsPerSecond: 5000000 // 5 Mbps
+      });
+
+      const chunks = [];
+      recorder.ondataavailable = e => {
+        if (e.data.size > 0) chunks.push(e.data);
+      };
+
+      recorder.onstop = () => {
+        const blob = new Blob(chunks, { type: 'video/webm' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'TrustShield_AI_Platform_Demo.webm';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+
+        btn.innerHTML = '✓ Video Downloaded!';
+        setTimeout(() => {
+          btn.innerHTML = origText;
+          btn.disabled = false;
+        }, 3000);
+      };
+
+      // Restart and play through full duration
+      playbackTime = 0;
+      isPlaying = true;
+      recorder.start();
+
+      let exportInterval = setInterval(() => {
+        playbackTime += 0.033; // 30 fps
+        renderFrame(playbackTime);
+        if (playbackTime >= totalDuration) {
+          clearInterval(exportInterval);
+          recorder.stop();
+          isPlaying = false;
+          playBtn.textContent = '▶ Play';
+        }
+      }, 33);
+    }
+
+    // Keyboard Shortcuts
+    document.addEventListener('keydown', e => {
+      if (e.key === ' ' || e.key === 'k') { e.preventDefault(); togglePlay(); }
+      if (e.key === 'ArrowRight') { e.preventDefault(); playbackTime = Math.min(totalDuration, playbackTime + 3); renderFrame(playbackTime); }
+      if (e.key === 'ArrowLeft') { e.preventDefault(); playbackTime = Math.max(0, playbackTime - 3); renderFrame(playbackTime); }
+      if (e.key === 'f') { toggleFullscreen(); }
+    });
+
+    // Initial render
+    setTimeout(() => renderFrame(0), 100);
+  </script>
 </body>
 </html>
