@@ -18,9 +18,12 @@ class Settings(BaseSettings):
     DEBUG: bool = False
     LOG_LEVEL: str = "INFO"
 
-    # ── Database (PostgreSQL + pgvector) ─────────────────────────────────
-    DATABASE_URL: str = "postgresql+asyncpg://sebi:sebi_secret@localhost:5432/sebi_fraud"
-    DATABASE_SYNC_URL: str = "postgresql://sebi:sebi_secret@localhost:5432/sebi_fraud"
+    # ── Database (PostgreSQL + pgvector / SQLite) ────────────────────────
+    DATABASE_URL: str = "sqlite+aiosqlite:///./sebi_fraud.db"
+    DATABASE_SYNC_URL: str = "sqlite:///./sebi_fraud.db"
+    DB_POOL_SIZE: int = 20
+    DB_MAX_OVERFLOW: int = 10
+
 
     # ── Redis ────────────────────────────────────────────────────────────
     REDIS_URL: str = "redis://localhost:6379/0"
